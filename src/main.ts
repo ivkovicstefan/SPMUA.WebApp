@@ -2,6 +2,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config';
 
+// Import TailwindCSS library
+import './assets/tailwind.css'
 // Import PrimeVue custom theme
 import './assets/theme.css'
 // Import PrimeIcons icon pack
