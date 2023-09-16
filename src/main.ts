@@ -4,6 +4,8 @@ import PrimeVue from 'primevue/config';
 
 // Import PrimeVue custom theme
 import './assets/theme.css'
+// Import PrimeIcons icon pack
+import 'primeicons/primeicons.css';
 
 import App from './App.vue'
 import router from './router'
