@@ -1,19 +1,27 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/public/Home.vue'
-import AdminHome from '../views/admin/AdminHome.vue'
+import PublicLayout from '../layouts/PublicLayout.vue'
+import HomeView from '../views/public/HomeView.vue'
+import AdminHomeView from '../views/admin/AdminHomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      component: PublicLayout,
+      children: [
+        {
+          path: '',
+          name: 'home',
+          component: HomeView
+        }
+    
+      ]
     },
     {
       path: '/admin',
       name: 'admin-home',
-      component: AdminHome
+      component: AdminHomeView
     }
   ]
 })
