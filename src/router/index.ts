@@ -3,6 +3,7 @@ import PublicLayout from '../layouts/PublicLayout.vue'
 import HomeView from '../views/public/HomeView.vue'
 import AdminLoginView from '../views/admin/AdminLoginView.vue'
 import AdminDashboardView from '../views/admin/AdminDashboardView.vue'
+import { useAuthStore } from '@/stores/auth.store'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,7 +25,10 @@ const router = createRouter({
         {
           path: 'dashboard',
           name: 'admin-dashboard',
-          component: AdminDashboardView
+          component: AdminDashboardView,
+          meta: {
+            isAuthRequired: true
+          }
         },
         {
           path: 'login',
@@ -34,6 +38,16 @@ const router = createRouter({
       ]
     }
   ]
+})
+
+router.beforeEach((to, from) => {
+  const authStore = useAuthStore()
+
+  if (to.meta && to.meta.isAuthRequired) {
+    if (!authStore.admin.isAuthenticated) {
+      return { name: 'admin-login' }
+    }
+  }
 })
 
 export default router
