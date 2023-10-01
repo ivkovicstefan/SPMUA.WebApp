@@ -1,48 +1,39 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios, { AxiosError} from 'axios'
+import { Admin } from '../types/entities/Admin'
+import { Response } from '../types/dtos/Response'
 
 const baseApiUrl = 'https://localhost:7236/api/admin'
 
 export const useAuthStore = defineStore('auth', {
     state: () => {
         return {
-            admin: {
-                token: '',
-                isAuthenticated: false,
-                firstName: 'Unknown',
-                lastName: 'Admin'
-            },
+            admin: null as unknown as Admin,
             isApiRequestLoading: false
         }
     },
     actions: {
-        async login(email: string, password: string) {
-            let response: {
-                isSuccessful: boolean,
-                data: string
-            }
+        async login(email: String, password: String) {
+            let response: Response
 
             this.isApiRequestLoading = true;
             
             try {
-                let result = await axios.post(baseApiUrl + '/login', {
+                const result = await axios.post(baseApiUrl + '/login', {
                     email: email,
                     password: password
                 });
 
-                response = {
-                    isSuccessful: true,
-                    data: ''
+                response = new Response(true, "", "")
+                //TODO: Replace "Unknown Admin" with actual admin fullname when backend changes the response object
+                this.admin = new Admin("Unknown Admin", true, result.data)
+            } catch (error: unknown) {
+                if (error instanceof AxiosError) {
+                    response = new Response(false, "", error.response?.data.description)
                 }
-
-                this.admin.isAuthenticated = true,
-                this.admin.token = result.data
-            } catch (error) {
-                response = {
-                    isSuccessful: false,
-                    data: error.response.data.description
+                else {
+                    throw error
                 }
-
             } finally {
                 this.isApiRequestLoading = false;
             }

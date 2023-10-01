@@ -10,17 +10,17 @@ import { useRouter } from 'vue-router'
 const authStore = useAuthStore()
 const router = useRouter()
 
-const email = ref('');
-const password = ref('');
-const errorMessage = ref('')
+const email = ref('' as string);
+const password = ref('' as string);
+const errorMessage = ref('' as string)
 
 const onLoginClick = async () => {
     let response = await authStore.login(email.value, password.value)
 
     if (response.isSuccessful) {
-        router.push('/admin/dashboard')
+        router.push({name: 'admin-dashboard'})
     } else {
-        errorMessage.value = response.data
+        errorMessage.value = response.message
     }
 }
 </script>
