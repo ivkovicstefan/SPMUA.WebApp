@@ -18,9 +18,17 @@ const router = createRouter({
           component: HomeView
         }
       ]
+    }, 
+    {
+      path: '/login',
+      name: 'admin-login',
+      component: AdminLoginView
     },
     {
       path: '/admin',
+      redirect: () => {
+        return '/admin/dashboard'
+      },
       children: [
         {
           path: 'dashboard',
@@ -29,11 +37,6 @@ const router = createRouter({
           meta: {
             isAuthRequired: true
           }
-        },
-        {
-          path: 'login',
-          name: 'admin-login',
-          component: AdminLoginView
         }
       ]
     }
