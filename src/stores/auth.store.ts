@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios, { AxiosError} from 'axios'
 import { Admin } from '../types/entities/Admin'
@@ -8,7 +9,7 @@ const baseApiUrl = 'https://localhost:7236/api/admin'
 export const useAuthStore = defineStore('auth', {
     state: () => {
         return {
-            admin: null as unknown as Admin,
+            admin: ref(JSON.parse(localStorage.getItem("admin") || "{}")),
             isApiRequestLoading: false
         }
     },
@@ -26,7 +27,8 @@ export const useAuthStore = defineStore('auth', {
 
                 response = new Response(true, "", "")
                 //TODO: Replace "Unknown Admin" with actual admin fullname when backend changes the response object
-                this.admin = new Admin("Unknown Admin", true, result.data)
+                const admin = new Admin("Unknown Admin", true, result.data)
+                localStorage.setItem("admin", JSON.stringify(admin))
             } catch (error: unknown) {
                 if (error instanceof AxiosError) {
                     response = new Response(false, "", error.response?.data.description)
