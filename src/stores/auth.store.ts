@@ -40,6 +40,10 @@ export const useAuthStore = defineStore('auth', {
       }
 
       return response
+    },
+    logout() {
+      //TODO: Check if there is a need to call API to destroy current token
+      localStorage.setItem('admin', JSON.stringify({}))
     }
   }
 })

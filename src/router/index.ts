@@ -1,8 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import PublicLayout from '../layouts/PublicLayout.vue'
+import AdminLayout from '../layouts/AdminLayout.vue'
 import HomeView from '../views/public/HomeView.vue'
 import AdminLoginView from '../views/admin/AdminLoginView.vue'
 import AdminDashboardView from '../views/admin/AdminDashboardView.vue'
+import AdminCalendarView from '../views/admin/AdminCalendarView.vue'
+import AdminReservationsView from '../views/admin/AdminReservationsView.vue'
+import AdminServicesView from '../views/admin/AdminServicesView.vue'
+import AdminWorkingHoursView from '../views/admin/AdminWorkingHoursView.vue'
+import AdminVacationsView from '../views/admin/AdminVacationsView.vue'
 import { useAuthStore } from '@/stores/auth.store'
 
 const router = createRouter({
@@ -18,7 +24,7 @@ const router = createRouter({
           component: HomeView
         }
       ]
-    }, 
+    },
     {
       path: '/login',
       name: 'admin-login',
@@ -26,6 +32,7 @@ const router = createRouter({
     },
     {
       path: '/admin',
+      component: AdminLayout,
       redirect: () => {
         return '/admin/dashboard'
       },
@@ -37,13 +44,53 @@ const router = createRouter({
           meta: {
             isAuthRequired: true
           }
+        },
+        {
+          path: 'calendar',
+          name: 'admin-calendar',
+          component: AdminCalendarView,
+          meta: {
+            isAuthRequired: true
+          }
+        },
+        {
+          path: 'reservations',
+          name: 'admin-reservations',
+          component: AdminReservationsView,
+          meta: {
+            isAuthRequired: true
+          }
+        },
+        {
+          path: 'services',
+          name: 'admin-services',
+          component: AdminServicesView,
+          meta: {
+            isAuthRequired: true
+          }
+        },
+        {
+          path: 'working-hours',
+          name: 'admin-working-hours',
+          component: AdminWorkingHoursView,
+          meta: {
+            isAuthRequired: true
+          }
+        },
+        {
+          path: 'vacations',
+          name: 'admin-vacations',
+          component: AdminVacationsView,
+          meta: {
+            isAuthRequired: true
+          }
         }
       ]
     }
   ]
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach((to) => {
   const authStore = useAuthStore()
 
   if (to.meta && to.meta.isAuthRequired) {
