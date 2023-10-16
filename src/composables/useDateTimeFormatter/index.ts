@@ -6,7 +6,25 @@ export const useDefaultDateFormatter = (rawDateTime: string): string => {
 }
 
 export const useDefaultTimeFormatter = (rawDateTime: string): string => {
-  return format(new Date(rawDateTime), 'HH:mm')
+    return format(new Date(rawDateTime), 'HH:mm')
+}
+
+export const useTimeOnlyToDefaultTimeFormatter = (timeOnly: string|null, useSeconds = false) : string|null => {
+  if (timeOnly == null || timeOnly == '') {
+    return null
+  }
+  else {
+    var date = new Date();
+
+    // Extract the time portion from the time-only string and set it in the JavaScript Date object
+    var timeParts = timeOnly.split(':');
+    date.setHours(parseInt(timeParts[0], 10));
+    date.setMinutes(parseInt(timeParts[1], 10));
+
+    const time =  format(date, 'HH:mm')
+
+    return useSeconds ? time.concat(":00") : time
+  }
 }
 
 export const useDateTimeAgoFormatter = (rawDateTime: string): string => {
