@@ -5,11 +5,12 @@ import AppStepWizard from '@/components/AppStepWizard.vue'
 import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
 import InputMask from 'primevue/inputmask';
+import Button from 'primevue/button'
 import { useServiceTypeStore } from '@/stores/service-type.store';
 import { useWorkingHoursStore } from '@/stores/working-hours.store';
 import { useAppointmentStore } from '@/stores/appointment.store'
 import { Appointment } from '@/types/entities/Appointment'
-import { getTomorowDate } from '@/composables/useDateTimeFormatter'
+import { getTomorowDate, useDefaultDateFormatter, useDefaultTimeFormatter } from '@/composables/useDateTimeFormatter'
 
 const stepWizardItems = [
     {
@@ -106,6 +107,10 @@ const computedAvailableHours = computed(() => {
     })
 
     return availableHoursArray
+})
+
+const computedAppointmentService = computed(() => {
+    return serviceTypes.data.find((st: any) => st.serviceTypeId == newAppointmentObject.serviceTypeId)
 })
 </script>
 
@@ -211,7 +216,39 @@ const computedAvailableHours = computed(() => {
                 </div>
             </template>
             <template #step4Content>
-                Step 4
+                <div class="flex flex-col gap-3">
+                    <div class="flex flex-col border rounded-xl bg-white py-2 px-3">
+                        <h1 class="text-zinc-400">Usluga</h1>
+                        <div class="flex justify-between">
+                            <div class="flex flex-col">
+                                <h1 class="font-semibold text-lg">{{ computedAppointmentService.serviceTypeName }}</h1>
+                                <h1>{{ computedAppointmentService.serviceTypePrice.toFixed(2) }} RSD</h1>
+                            </div>
+                            <Button icon="pi pi-pencil" outlined rounded aria-label="Filter" />
+                        </div>
+                    </div>
+                    <div class="flex flex-col border rounded-xl bg-white py-2 px-3">
+                        <h1 class="text-zinc-400">Termin</h1>
+                        <div class="flex justify-between">
+                            <div class="flex flex-col">
+                                <h1 class="font-semibold text-lg">{{ useDefaultDateFormatter(newAppointmentObject.appointmentDate.toDateString()) }}</h1>
+                                <h1 class="text-lg">{{useDefaultTimeFormatter(newAppointmentObject.appointmentDate.toDateString())}} - {{'01:00'}}</h1>
+                            </div>
+                            <Button icon="pi pi-pencil" outlined rounded aria-label="Filter" />
+                        </div>
+                    </div>
+                    <div class="flex flex-col border rounded-xl bg-white py-2 px-3">
+                        <h1 class="text-zinc-400">Kontakt podaci</h1>
+                        <div class="flex justify-between">
+                            <div class="flex flex-col">
+                                <h1 class="font-semibold text-lg">{{ newAppointmentObject.customerFirstName + ' ' + newAppointmentObject.customerLastName}}</h1>
+                                <h1 v-show="newAppointmentObject.customerEmail.length > 0" class="text-lg"><span class="pi pi-envelope mr-2"></span>{{ newAppointmentObject.customerEmail}}</h1>
+                                <h1 class="text-lg"><span class="pi pi-phone mr-2"></span>{{ newAppointmentObject.customerPhone}}</h1>
+                            </div>
+                            <Button icon="pi pi-pencil" outlined rounded aria-label="Filter" />
+                        </div>
+                    </div>
+                </div>
             </template>
         </AppStepWizard>
     </div>
