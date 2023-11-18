@@ -3,6 +3,8 @@ import { ref, reactive, computed } from 'vue'
 import AppRadioGroup from '@/components/AppRadioGroup.vue';
 import AppStepWizard from '@/components/AppStepWizard.vue'
 import Calendar from 'primevue/calendar';
+import InputText from 'primevue/inputtext';
+import InputMask from 'primevue/inputmask';
 import { useServiceTypeStore } from '@/stores/service-type.store';
 import { useWorkingHoursStore } from '@/stores/working-hours.store';
 import { useAppointmentStore } from '@/stores/appointment.store'
@@ -165,7 +167,48 @@ const computedAvailableHours = computed(() => {
                 </AppRadioGroup>
             </template>
             <template #step3Content>
-                Step 3
+                <div class="flex flex-col gap-3">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xl">
+                            Ime
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <InputText
+                            v-model="newAppointmentObject.customerFirstName"
+                            placeholder="Ime"    
+                        ></InputText>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xl">
+                            Prezime
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <InputText
+                            v-model="newAppointmentObject.customerLastName"
+                            placeholder="Prezime"    
+                        ></InputText>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xl">
+                            Email adresa
+                        </label>
+                        <InputText
+                            v-model="newAppointmentObject.customerEmail"
+                            placeholder="Email adresa"    
+                        ></InputText>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xl">
+                            Broj mobilnog telefona
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <InputMask
+                            v-model="newAppointmentObject.customerPhone"
+                            mask="0699999999"
+                            placeholder="0601234567"    
+                        ></InputMask>
+                    </div>
+                </div>
             </template>
             <template #step4Content>
                 Step 4
