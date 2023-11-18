@@ -62,3 +62,9 @@ const latinScriptMap: any = {
   година: 'godina',
   године: 'godine'
 }
+
+export const getTomorowDate = () => {
+  const tomorowDate = new Date()
+  tomorowDate.setDate(tomorowDate.getDate() + 1)
+  return tomorowDate  
+} 

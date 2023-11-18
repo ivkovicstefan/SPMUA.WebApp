@@ -7,7 +7,9 @@ export const useAppointmentStore = defineStore('appointment', {
   state: () => {
     return {
       appointments: useApi('/api/appointment/appointments') as ApiWrapper,
-      patchAppointmentStatus: useApi('/api/appointment/appointment/status') as ApiWrapper
+      patchAppointmentStatus: useApi('/api/appointment/appointment/status') as ApiWrapper,
+      unavailableDates: useApi('/api/appointment/unavailable-dates') as ApiWrapper,
+      availableHours: useApi('/api/appointment/available-hours') as ApiWrapper,
     }
   },
   actions: {
@@ -22,6 +24,31 @@ export const useAppointmentStore = defineStore('appointment', {
           method: 'PATCH'
         },
         true
+      )
+    },
+    async getUnavailableDates(serviceTypeId: number, fromDate: Date, toDate: Date): Promise<void> {
+      await this.unavailableDates.execute(
+        undefined,
+        undefined,
+        {
+          params: {
+            serviceTypeId: serviceTypeId,
+            fromDate: fromDate.toISOString(),
+            toDate: toDate.toISOString()
+          }
+        }
+      )
+    },
+    async getAvailableHours(serviceTypeId: number, date: Date): Promise<void> {
+      await this.availableHours.execute(
+        undefined,
+        undefined,
+        {
+          params: {
+            serviceTypeId: serviceTypeId,
+            date: date
+          }
+        }
       )
     }
   }
