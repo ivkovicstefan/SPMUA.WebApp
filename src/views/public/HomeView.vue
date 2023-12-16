@@ -33,6 +33,7 @@ const stepWizardItems = [
     }
 ]
 
+
 const newAppointmentObject = reactive(new Appointment())
 const appointmentTime = ref('')
 
@@ -126,12 +127,32 @@ const computedAppointmentService = computed(() => {
         <div class="px-10 py-5">
             <h1 class="leading-[1] text-[2.35rem] lg:text-5xl font-semibold">Neka moje četkice ispričaju tvoju priču.</h1>
             <p class="mt-6 text-zinc-500">Uz svaki potez četkice otkrivam tvoju jedinstvenost i ističem ono što te čini posebnom.</p>
-            <Button class="mt-6" @click="onBookAppointmentClick">Rezerviši svoj termin</Button>
+            <Button class="mt-6" label="Rezerviši svoj termin" @click="onBookAppointmentClick"></Button>
         </div>
         <img class="w-full h-full object-cover lg:w-auto lg:h-[60vh]" src="@/assets/heroimage.png" alt="Hero Image">
     </div>
-
     <!-- Gallery Section -->
+    <div class="py-5 lg:px-48 bg-white px-10">
+        <div class="flex mb-6 items-center">
+            <h1 class="leading-[1] text-[2.35rem] lg:text-5xl ">Galerija</h1>
+            <Button class="ml-auto" label="Pogledaj sve" icon="pi pi-chevron-right" icon-pos="right" outlined></Button>
+        </div>
+        <div class="grid grid-cols-3 gap-6">
+            <video class="col-span-2 row-span-2 rounded-xl object-cover aspect-square" autoplay muted loop>
+                <source src="@/assets/gallery-video.mp4" type="video/mp4">
+            </video>
+            <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-2.jpg"/>
+            <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-3.jpg"/>
+            <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-4.jpg"/>
+            <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-5.jpg"/>
+            <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-6.jpg"/>
+            <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-7.jpg"/>
+            <img class="rounded-xl row-span-2 col-span-2 object-cover aspect-square" src="@/assets/gallery-picture-1.png"/>
+            <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-8.jpg"/>
+        </div>
+        <div class="flex mt-6">
+        </div>
+    </div>
     <!-- Book Appointment Section-->
     <div ref="bookAppointmentSection" class="bg-white">
         <AppStepWizard
@@ -239,7 +260,6 @@ const computedAppointmentService = computed(() => {
                                 <h1 class="font-semibold text-lg">{{ computedAppointmentService.serviceTypeName }}</h1>
                                 <h1>{{ computedAppointmentService.serviceTypePrice.toFixed(2) }} RSD</h1>
                             </div>
-                            <Button icon="pi pi-pencil" outlined rounded aria-label="Filter" />
                         </div>
                     </div>
                     <div class="flex flex-col border rounded-xl bg-white py-2 px-3">
@@ -249,7 +269,6 @@ const computedAppointmentService = computed(() => {
                                 <h1 class="font-semibold text-lg">{{ useDefaultDateFormatter(newAppointmentObject.appointmentDate.toDateString()) }}</h1>
                                 <h1 class="text-lg">{{useDefaultTimeFormatter(newAppointmentObject.appointmentDate.toDateString())}} - {{'01:00'}}</h1>
                             </div>
-                            <Button icon="pi pi-pencil" outlined rounded aria-label="Filter" />
                         </div>
                     </div>
                     <div class="flex flex-col border rounded-xl bg-white py-2 px-3">
@@ -260,7 +279,6 @@ const computedAppointmentService = computed(() => {
                                 <h1 v-show="newAppointmentObject.customerEmail.length > 0" class="text-lg"><span class="pi pi-envelope mr-2"></span>{{ newAppointmentObject.customerEmail}}</h1>
                                 <h1 class="text-lg"><span class="pi pi-phone mr-2"></span>{{ newAppointmentObject.customerPhone}}</h1>
                             </div>
-                            <Button icon="pi pi-pencil" outlined rounded aria-label="Filter" />
                         </div>
                     </div>
                 </div>
