@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Menubar from 'primevue/Menubar'
+import Button from 'primevue/button';
 
 const menuBarItems = ref([
     {
@@ -40,7 +41,24 @@ const menuBarItems = ref([
             <RouterView>
             </RouterView>
         </main>
-        <footer class="bg-black text-white"> Footer Content </footer>
+        <footer class="px-10 py-5 lg:px-48"> 
+            <h1 class="leading-[1] text-[2.35rem] lg:text-5xl mb-6">Lokacija</h1>
+            <p>Kneginje Milice 118</p>
+            <p>35000, Jagodina</p>
+            <Button label="Pokreni navigaciju" outlined class="mt-3"></Button>
+            <h1 class="leading-[1] text-[2.35rem] lg:text-5xl my-6">Kontakt</h1>
+            <p>062 1775 995</p>
+            <p>petraja01@gmail.com</p>
+            <p>samardzicpetra.mua</p>
+            <h1 class="leading-[1] text-[2.35rem] lg:text-5xl my-6">Linkovi</h1>
+            <RouterLink :to="{name: 'admin-login'}">Administracija</RouterLink>
+
+            <p class="mt-6">Copyright &copy {{ new Date().getFullYear() }} Samardžić Petra<br>
+                <span class="font-semibold">Vebsajt kreirao 
+                    <a class="text-amber-600" href="https://www.linkedin.com/in/ivkovicstefan/" target="_blank">Stefan Ivković</a>.
+                </span>
+            </p>
+        </footer>
     </div>
 </template>
 
