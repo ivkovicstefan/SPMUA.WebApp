@@ -12,6 +12,12 @@ import { useAppointmentStore } from '@/stores/appointment.store'
 import { Appointment } from '@/types/entities/Appointment'
 import { getTomorowDate, useDefaultDateFormatter, useDefaultTimeFormatter } from '@/composables/useDateTimeFormatter'
 
+const bookAppointmentSection = ref(null)
+
+const onBookAppointmentClick = () => {
+    bookAppointmentSection.value.scrollIntoView({ behavior: 'smooth'})
+}
+
 const stepWizardItems = [
     {
         stepTitle: 'Odabir usluge'
@@ -116,9 +122,18 @@ const computedAppointmentService = computed(() => {
 
 <template>
     <!-- Hero Section -->
+    <div class="h-[calc(100vh-160px)] lg:h-auto flex flex-col lg:flex-row self-center overflow-hidden p-0 lg:px-48">
+        <div class="px-10 py-5">
+            <h1 class="leading-[1] text-[2.35rem] lg:text-5xl font-semibold">Neka moje četkice ispričaju tvoju priču.</h1>
+            <p class="mt-6 text-zinc-500">Uz svaki potez četkice otkrivam tvoju jedinstvenost i ističem ono što te čini posebnom.</p>
+            <Button class="mt-6" @click="onBookAppointmentClick">Rezerviši svoj termin</Button>
+        </div>
+        <img class="w-full h-full object-cover lg:w-auto lg:h-[60vh]" src="@/assets/heroimage.png" alt="Hero Image">
+    </div>
+
     <!-- Gallery Section -->
     <!-- Book Appointment Section-->
-    <div>
+    <div ref="bookAppointmentSection" class="bg-white">
         <AppStepWizard
             :items="stepWizardItems"
         >

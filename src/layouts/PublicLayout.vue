@@ -12,7 +12,7 @@ const menuBarItems = ref([
 
 <template>
     <div class="flex flex-col min-h-screen">
-        <header>
+        <header class="px-10 py-5 lg:px-48">
             <Menubar :model="menuBarItems">
                 <template #start>
                     <router-link to="/">
@@ -46,7 +46,7 @@ const menuBarItems = ref([
 
 <style>
 .p-menubar {
-    @apply border-0 justify-between px-10 py-5 lg:px-16;
+    @apply border-0 justify-between;
 }
 
 .p-menubar-start {
