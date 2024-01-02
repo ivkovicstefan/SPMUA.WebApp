@@ -12,7 +12,11 @@ import Textarea from 'primevue/textarea'
 import { ReservationResponse } from '@/types/entities/ReservationResponse'
 import { AppointmentStatusChangeAction } from '@/types/Enums'
 import { useAppointmentStore } from '@/stores/appointment.store'
-import { useDefaultDateFormatter, useDefaultTimeFormatter, useDateTimeAgoFormatter } from '@/composables/useDateTimeFormatter'
+import {
+  useDefaultDateFormatter,
+  useDefaultTimeFormatter,
+  useDateTimeAgoFormatter
+} from '@/composables/useDateTimeFormatter'
 
 const appointmentStore = useAppointmentStore()
 const { appointments, patchAppointmentStatus } = appointmentStore
@@ -20,12 +24,12 @@ const { appointments, patchAppointmentStatus } = appointmentStore
 const pendingAppointmentsExpandedRows = ref([])
 
 const computedPendingAppointments = computed(() => {
-  return appointments.data.filter(a => a.appointmentStatusId == 1)
+  return appointments.data.filter((a) => a.appointmentStatusId == 1)
 })
 
 appointmentStore.getAppointments()
 
-const reservationResponseObject = reactive(new ReservationResponse)
+const reservationResponseObject = reactive(new ReservationResponse())
 
 const isConfirmOrRejectAppointmentModalVisible = ref(false)
 const confirmOrRejectAppointmentModalMode = ref(0)
@@ -55,7 +59,8 @@ const onApproveAppointmentClick = (appointmentId: number): void => {
 
 const onReservationResponseConfirm = async (): Promise<void> => {
   reservationResponseObject.appointmentId = confirmOrRejectAppointmentId.value
-  reservationResponseObject.isAppointmentConfirmed = confirmOrRejectAppointmentModalMode.value == AppointmentStatusChangeAction.Approve
+  reservationResponseObject.isAppointmentConfirmed =
+    confirmOrRejectAppointmentModalMode.value == AppointmentStatusChangeAction.Approve
 
   await appointmentStore.updateAppointmentStatus(reservationResponseObject)
   isConfirmOrRejectAppointmentModalVisible.value = false
