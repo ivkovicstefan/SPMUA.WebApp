@@ -16,10 +16,10 @@ export const useTimeOnlyToDefaultTimeFormatter = (
   if (timeOnly == null || timeOnly == '') {
     return null
   } else {
-    var date = new Date()
+    const date = new Date()
 
     // Extract the time portion from the time-only string and set it in the JavaScript Date object
-    var timeParts = timeOnly.split(':')
+    const timeParts = timeOnly.split(':')
     date.setHours(parseInt(timeParts[0], 10))
     date.setMinutes(parseInt(timeParts[1], 10))
 

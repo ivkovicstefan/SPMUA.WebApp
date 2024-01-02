@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-
 const props = defineProps({
   stepsCount: {
     type: Number,
@@ -29,6 +27,7 @@ const getBackgroundClass = (stepIndex: Number) => {
       v-for="(step, index) in stepsCount"
       class="flex-grow p-1 border border-black rounded-lg"
       :class="getBackgroundClass(index)"
+      :key="index"
     ></div>
   </div>
 </template>

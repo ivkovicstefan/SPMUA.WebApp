@@ -207,8 +207,9 @@ const computedAppointmentService = computed(() => {
       <h1 class="leading-[1] text-[2.35rem] lg:text-5xl">Usluge</h1>
       <div class="flex flex-col lg:flex-row gap-6">
         <div
-          v-for="item in serviceTypes.data"
+          v-for="(item, index) in serviceTypes.data"
           class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl flex flex-col bg-white hover:scale-105 transition duration-200 cursor-pointer"
+          :key="index"  
         >
           <div class="flex p-3 flex-col">
             <h1 class="text-xl font-semibold">{{ item.serviceTypeName }}</h1>

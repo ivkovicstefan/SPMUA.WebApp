@@ -20,7 +20,7 @@ const menuBarItems = ref([
             <img alt="logo" src="@/assets/logo-light.png" class="h-[120px]" />
           </router-link>
         </template>
-        <template #item="{ label, item, props, root }">
+        <template #item="{ label, item, props }">
           <router-link v-if="item.route" v-slot="routerProps" :to="item.route">
             <a :href="routerProps.href" v-bind="props.action">
               <span v-bind="props.icon" />
@@ -55,7 +55,7 @@ const menuBarItems = ref([
       <RouterLink :to="{ name: 'admin-login' }">Administracija</RouterLink>
 
       <p class="mt-6">
-        Copyright &copy {{ new Date().getFullYear() }} Samardžić Petra<br />
+        Copyright &copy; {{ new Date().getFullYear() }} Samardžić Petra<br />
         <span class="font-semibold"
           >Vebsajt kreirao
           <a

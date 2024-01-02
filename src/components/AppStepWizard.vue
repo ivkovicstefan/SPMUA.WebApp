@@ -10,7 +10,7 @@ interface AppStepWizardItem {
 
 const props = defineProps({
   items: {
-    type: Array as () => Array<AppStepWizardItem>,
+    type: Array<AppStepWizardItem>,
     required: true,
     default: []
   }

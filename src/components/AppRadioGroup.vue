@@ -30,6 +30,8 @@ const computedClassList = computed(() => {
     return 'flex-row flex-wrap'
   } else if (props.options.itemDirection == 'column') {
     return 'flex-col'
+  } else {
+    return ''
   }
 })
 
@@ -45,7 +47,7 @@ const onRadioItemClick = (item: any) => {
 
 <template>
   <div class="flex justify-start gap-3 items-left" :class="computedClassList">
-    <template v-for="item in items">
+    <template v-for="(item, index) in items" :key="index">
       <div
         class="bg-white border rounded-lg shadow-lg"
         :class="{ '!bg-black text-white': isActiveRadioItem(item) }"
