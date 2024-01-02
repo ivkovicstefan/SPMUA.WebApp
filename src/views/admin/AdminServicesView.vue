@@ -9,7 +9,7 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
-import { useServiceTypeStore } from '@/stores/service-type.store';
+import { useServiceTypeStore } from '@/stores/service-type.store'
 
 const serviceTypeStore = useServiceTypeStore()
 const { serviceTypes, putServiceType } = serviceTypeStore
@@ -20,14 +20,16 @@ const isEditServiceTypeModalVisible: Ref<boolean> = ref(false)
 const editServiceTypeObject: Ref<any> = ref({})
 
 const onEditServiceTypeRowClick = (serviceTypeId: number): void => {
-  editServiceTypeObject.value = serviceTypes.data.find((st: any) => st.serviceTypeId == serviceTypeId)
+  editServiceTypeObject.value = serviceTypes.data.find(
+    (st: any) => st.serviceTypeId == serviceTypeId
+  )
 
   isEditServiceTypeModalVisible.value = true
 }
 
 const onSaveServiceTypeClick = async () => {
   await serviceTypeStore.updateServiceType(editServiceTypeObject.value)
-  
+
   isEditServiceTypeModalVisible.value = false
 
   serviceTypeStore.getServiceTypes()
@@ -59,20 +61,21 @@ const onSaveServiceTypeClick = async () => {
             </Column>
             <Column field="serviceTypeDuration">
               <template #body="slotProps">
-                <i class="pi pi-clock !text-[0.9rem] !text-gray-400 mr-1"></i>{{ slotProps.data.serviceTypeDuration + " min" }}
-              </template> 
-            </Column>        
+                <i class="pi pi-clock !text-[0.9rem] !text-gray-400 mr-1"></i
+                >{{ slotProps.data.serviceTypeDuration + ' min' }}
+              </template>
+            </Column>
             <Column>
               <template #body="slotProps">
-                <Button 
-                  class="!bg-transparent !p-0 !h-[32px] !w-[32px] !text-gray-400 !border-none hover:!bg-gray-100 hover:!text-black focus:!shadow-none" 
-                  icon="pi pi-pencil" 
+                <Button
+                  class="!bg-transparent !p-0 !h-[32px] !w-[32px] !text-gray-400 !border-none hover:!bg-gray-100 hover:!text-black focus:!shadow-none"
+                  icon="pi pi-pencil"
                   rounded
                   @click="onEditServiceTypeRowClick(slotProps.data.serviceTypeId)"
                 ></Button>
               </template>
-            </Column>       
-          </DataTable>   
+            </Column>
+          </DataTable>
           <Dialog
             v-model:visible="isEditServiceTypeModalVisible"
             header="Izmeni uslugu"
@@ -82,24 +85,15 @@ const onSaveServiceTypeClick = async () => {
             <div class="grid grid-cols-2 gap-6">
               <div class="col-span-2 lg:col-span-1 flex flex-col gap-2">
                 <label for="username">Naziv usluge</label>
-                <InputText 
-                  type="text" 
-                  v-model="editServiceTypeObject.serviceTypeName"
-                />
+                <InputText type="text" v-model="editServiceTypeObject.serviceTypeName" />
                 <label for="username">Cena</label>
                 <div class="p-inputgroup">
-                  <InputNumber 
-                    type="text" 
-                    v-model="editServiceTypeObject.serviceTypePrice"
-                  />
+                  <InputNumber type="text" v-model="editServiceTypeObject.serviceTypePrice" />
                   <span class="p-inputgroup-addon"><small>RSD</small></span>
                 </div>
                 <label for="username">Trajanje</label>
                 <div class="p-inputgroup">
-                  <InputNumber 
-                    type="text" 
-                    v-model="editServiceTypeObject.serviceTypeDuration"
-                  />
+                  <InputNumber type="text" v-model="editServiceTypeObject.serviceTypeDuration" />
                   <span class="p-inputgroup-addon">min</span>
                 </div>
               </div>
@@ -110,43 +104,43 @@ const onSaveServiceTypeClick = async () => {
                     <tr>
                       <td>Ponedeljak</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnMonday"/>
+                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnMonday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Utorak</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnTuesday"/>
+                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnTuesday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Sreda</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnWednesday"/>
+                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnWednesday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Četvrtak</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnThursday"/>
+                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnThursday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Petak</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnFriday"/>
+                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnFriday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Subota</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnSaturday"/>
+                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnSaturday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Nedelja</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnSunday"/>
+                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnSunday" />
                       </td>
                     </tr>
                   </table>
@@ -154,15 +148,16 @@ const onSaveServiceTypeClick = async () => {
               </div>
             </div>
             <template #footer>
-              <Button 
-                icon="pi pi-save" 
-                label="Sačuvaj" 
+              <Button
+                icon="pi pi-save"
+                label="Sačuvaj"
                 class="!m-0"
                 :loading="putServiceType.isLoading"
-                @click="onSaveServiceTypeClick">
+                @click="onSaveServiceTypeClick"
+              >
               </Button>
             </template>
-          </Dialog>      
+          </Dialog>
         </div>
         <div class="flex items-center min-h-[300px]" v-if="serviceTypes.isLoading">
           <ProgressSpinner
@@ -189,4 +184,3 @@ const onSaveServiceTypeClick = async () => {
   @apply !min-w-[2.25rem] !h-[2.25rem];
 }
 </style>
-
