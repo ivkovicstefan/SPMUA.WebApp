@@ -237,13 +237,14 @@ const computedAppointmentService = computed(() => {
     <div class="order-3 lg:order-2 py-5 lg:px-48 bg-white px-10">
       <div class="flex mb-6 items-center">
         <h1 class="leading-[1] text-[2.35rem] lg:text-5xl">Galerija</h1>
-        <Button
-          class="ml-auto"
-          label="Pogledaj sve"
-          icon="pi pi-chevron-right"
-          icon-pos="right"
-          outlined
-        ></Button>
+        <RouterLink to="/gallery" class="ml-auto">
+          <Button
+            label="Pogledaj sve"
+            icon="pi pi-chevron-right"
+            icon-pos="right"
+            outlined
+          ></Button>
+        </RouterLink>
       </div>
       <div class="grid grid-cols-3 gap-6">
         <video

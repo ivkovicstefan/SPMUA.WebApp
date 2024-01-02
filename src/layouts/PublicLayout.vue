@@ -7,6 +7,10 @@ const menuBarItems = ref([
   {
     label: 'Početna',
     route: '/'
+  },
+  {
+    label: 'Galerija',
+    route: '/gallery'
   }
 ])
 </script>
