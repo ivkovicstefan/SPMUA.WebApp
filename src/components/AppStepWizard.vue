@@ -51,6 +51,7 @@ const onNextStepClick = () => {
         tag="div"
         :name="isSlideTransitionBackwards ? 'back-slide' : 'slide'"
         class="relative"
+        style="will-change: transform"
       >
         <div :key="currentStepIndex" class="w-full absolute">
           <slot :name="`step${currentStepIndex + 1}Content`"></slot>
@@ -86,11 +87,11 @@ const onNextStepClick = () => {
 }
 
 .slide-enter-from {
-  transform: translateX(100%);
+  transform: translateX(calc(100% + 2.5rem));
 }
 
 .slide-leave-to {
-  transform: translateX(-100%);
+  transform: translateX(calc(-100% - 2.5rem));
 }
 
 .back-slide-enter-active,
@@ -99,10 +100,10 @@ const onNextStepClick = () => {
 }
 
 .back-slide-enter-from {
-  transform: translateX(-100%);
+  transform: translateX(calc(-100% - 2.5rem));
 }
 
 .back-slide-leave-to {
-  transform: translateX(100%);
+  transform: translateX(calc(100% + 2.5rem));
 }
 </style>
