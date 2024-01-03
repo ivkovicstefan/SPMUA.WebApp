@@ -15,12 +15,13 @@ export const useServiceTypeStore = defineStore('service-types', {
     },
     async updateServiceType(serviceTypeObject: any): Promise<void> {
       await this.putServiceType.execute(
-        undefined, 
-        serviceTypeObject, 
+        undefined,
+        serviceTypeObject,
         {
-          method: "PUT"
+          method: 'PUT'
         },
-        true)
+        true
+      )
     }
   }
 })
