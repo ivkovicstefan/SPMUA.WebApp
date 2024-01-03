@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import AppRadioGroup from '@/components/AppRadioGroup.vue'
 import AppStepWizard from '@/components/AppStepWizard.vue'
 import Calendar from 'primevue/calendar'
@@ -99,6 +99,12 @@ const serviceTypeStore = useServiceTypeStore()
 const { serviceTypes } = serviceTypeStore
 
 serviceTypeStore.getServiceTypes()
+
+watch(() => newAppointmentObject.serviceTypeId, () => {
+  newAppointmentObject.appointmentDate = null
+  appointmentTime.value = ''
+  availableHours.data = []
+}, { deep: true })
 
 const workingHoursStore = useWorkingHoursStore()
 const { workingDays } = workingHoursStore
