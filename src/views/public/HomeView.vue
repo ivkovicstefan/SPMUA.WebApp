@@ -203,58 +203,29 @@ const computedAppointmentService = computed(() => {
       />
     </div>
     <!-- Services Section -->
-    <div class="order-2 lg:order-3 px-10 py-5 lg:px-48 flex flex-col gap-6 bg-white">
-      <h1 class="leading-[1] text-[2.35rem] lg:text-5xl">Usluge</h1>
-      <div class="flex flex-col lg:flex-row gap-6">
-        <div
-          v-for="(item, index) in serviceTypes.data"
-          class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl flex flex-col bg-white hover:scale-105 transition duration-200 cursor-pointer"
-          :key="index"  
-        >
+    <div class="order-2 lg:order-3 px-10 py-5 lg:px-48 flex flex-col bg-white">
+      <h1 class="leading-[1] text-[2.35rem] lg:text-5xl mb-12">Usluge</h1>
+      <div class="grid grid-cols-4 gap-6">
+        <div v-for="item in serviceTypes.data" class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl col-span-4 lg:col-span-1 flex flex-col bg-white hover:scale-105 transition duration-200 cursor-pointer">
           <div class="flex p-3 flex-col">
             <h1 class="text-xl font-semibold">{{ item.serviceTypeName }}</h1>
             <p class="text-zinc-400"></p>
-            <!-- <p><span class="rounded-[50%] w-[10px] h-[10px] inline-block bg-green-500 mr-2"></span>{{ getAvailableAtDays(item) }}</p> -->
             <table class="mt-3 text-sm" cellpadding="5">
-              <tr>
-                <td class="w-[20px]"><i class="pi pi-money-bill"></i></td>
-                <td>{{ item.serviceTypePrice.toFixed(2) }} RSD</td>
-              </tr>
-              <tr>
-                <td><i class="pi pi-clock"></i></td>
-                <td>{{ item.serviceTypeDuration }} min</td>
-              </tr>
-              <tr>
-                <td><i class="pi pi-circle-fill text-green-500 text-sm"></i></td>
-                <td>{{ getAvailableAtDays(item) }}</td>
-              </tr>
+                <tr>
+                    <td class="w-[20px]"><i class="pi pi-money-bill"></i></td>
+                    <td>{{ item.serviceTypePrice.toFixed(2) }} RSD</td>
+                </tr>
+                <tr>
+                    <td><i class="pi pi-clock"></i></td>
+                    <td>{{ item.serviceTypeDuration }} min</td>
+                </tr>
+                <tr>
+                    <td><i class="pi pi-circle-fill text-green-500 text-sm"></i></td>
+                    <td>{{ getAvailableAtDays(item) }}</td>
+                </tr>
             </table>
           </div>
         </div>
-        <!-- Services Section -->
-        <div class="order-2 lg:order-3 px-10 py-5 lg:px-48 flex flex-col bg-white">
-            <h1 class="leading-[1] text-[2.35rem] lg:text-5xl mb-12">Usluge</h1>
-            <div class="grid grid-cols-4 gap-6">
-                <div v-for="item in serviceTypes.data" class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl col-span-4 lg:col-span-1 flex flex-col bg-white hover:scale-105 transition duration-200 cursor-pointer">
-                    <div class="flex p-3 flex-col">
-                        <h1 class="text-xl font-semibold">{{ item.serviceTypeName }}</h1>
-                        <p class="text-zinc-400"></p>
-                        <!-- <p><span class="rounded-[50%] w-[10px] h-[10px] inline-block bg-green-500 mr-2"></span>{{ getAvailableAtDays(item) }}</p> -->
-                        <table class="mt-3 text-sm" cellpadding="5">
-                            <tr>
-                                <td class="w-[20px]"><i class="pi pi-money-bill"></i></td>
-                                <td>{{ item.serviceTypePrice.toFixed(2) }} RSD</td>
-                            </tr>
-                            <tr>
-                                <td><i class="pi pi-clock"></i></td>
-                                <td>{{ item.serviceTypeDuration }} min</td>
-                            </tr>
-                            <tr>
-                                <td><i class="pi pi-circle-fill text-green-500 text-sm"></i></td>
-                                <td>{{ getAvailableAtDays(item) }}</td>
-                            </tr>
-                        </table>
-                    </div>
       </div>
     </div>
     <!-- Gallery Section -->
