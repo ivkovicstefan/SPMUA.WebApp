@@ -37,7 +37,7 @@ const onNextStepClick = () => {
 <template>
   <!-- Mobile version -->
   <div class="flex flex-col h-screen">
-    <div class="p-3 border-b">
+    <div class="px-10 py-6 border-b">
       <!-- App Steps -->
       <AppSteps :steps-count="items.length" :current-step-index="currentStepIndex"> </AppSteps>
 
@@ -45,7 +45,7 @@ const onNextStepClick = () => {
         {{ items[currentStepIndex].stepTitle }}
       </h1>
     </div>
-    <div class="flex-grow p-3 bg-zinc-50 overflow-y-auto">
+    <div class="flex-grow px-10 py-6 bg-zinc-50 overflow-y-auto">
       <!-- Content -->
       <TransitionGroup
         tag="div"
@@ -57,7 +57,7 @@ const onNextStepClick = () => {
         </div>
       </TransitionGroup>
     </div>
-    <div class="p-3 border-t">
+    <div class="px-10 py-3 border-t">
       <!-- Actions -->
       <Button
         v-show="currentStepIndex != 0"
