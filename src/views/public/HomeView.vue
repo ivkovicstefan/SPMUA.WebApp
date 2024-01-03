@@ -184,9 +184,7 @@ const computedAppointmentService = computed(() => {
 <template>
   <div class="flex flex-col">
     <!-- Hero Section -->
-    <div
-      class="h-[calc(100vh-160px)] lg:h-auto flex flex-col lg:flex-row self-center overflow-hidden p-0 lg:px-48"
-    >
+    <div class="h-[calc(100vh-160px)] lg:h-auto flex flex-col lg:flex-row self-center overflow-hidden p-0 lg:px-48">
       <div class="px-10 py-5 lg:px-0">
         <h1 class="leading-[1] text-[2.35rem] lg:text-5xl font-semibold">
           Neka moje četkice ispričaju tvoju priču.
@@ -203,7 +201,7 @@ const computedAppointmentService = computed(() => {
       />
     </div>
     <!-- Services Section -->
-    <div class="order-2 lg:order-3 px-10 py-5 lg:px-48 flex flex-col bg-white">
+    <div class="order-2 lg:order-3 px-10 py-6 lg:px-48 flex flex-col bg-white">
       <h1 class="leading-[1] text-[2.35rem] lg:text-5xl mb-12">Usluge</h1>
       <div class="grid grid-cols-4 gap-6">
         <div v-for="item in serviceTypes.data" class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl col-span-4 lg:col-span-1 flex flex-col bg-white hover:scale-105 transition duration-200 cursor-pointer">
@@ -229,8 +227,8 @@ const computedAppointmentService = computed(() => {
       </div>
     </div>
     <!-- Gallery Section -->
-    <div class="order-3 lg:order-2 py-5 lg:px-48 bg-white px-10">
-      <div class="flex mb-6 items-center">
+    <div class="order-3 lg:order-2 py-6 lg:px-48 bg-white px-10">
+      <div class="flex mb-12 items-center">
         <h1 class="leading-[1] text-[2.35rem] lg:text-5xl">Galerija</h1>
         <RouterLink to="/gallery" class="ml-auto">
           <Button
