@@ -45,7 +45,7 @@ const onNextStepClick = () => {
         {{ items[currentStepIndex].stepTitle }}
       </h1>
     </div>
-    <div class="flex-grow px-10 py-6 bg-zinc-50 overflow-y-auto">
+    <div class="flex-grow px-10 py-6 bg-zinc-50 overflow-y-auto overflow-x-hidden">
       <!-- Content -->
       <TransitionGroup
         tag="div"
