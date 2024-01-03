@@ -13,8 +13,15 @@ const props = defineProps({
     type: Array<AppStepWizardItem>,
     required: true,
     default: []
+  },
+  disableNextButton: {
+    type: Boolean,
+    required: false,
+    default: false
   }
 })
+
+const emits = defineEmits(['update:step-index'])
 
 const currentStepIndex: Ref<number> = ref(0)
 
@@ -23,6 +30,7 @@ const isSlideTransitionBackwards = ref(false)
 const onPreviousStepClick = () => {
   isSlideTransitionBackwards.value = true
   currentStepIndex.value--
+  emits('update:step-index', currentStepIndex.value)
 }
 
 const onNextStepClick = () => {
@@ -30,6 +38,7 @@ const onNextStepClick = () => {
 
   if (currentStepIndex.value + 1 < props.items.length) {
     currentStepIndex.value++
+    emits('update:step-index', currentStepIndex.value)
   }
 }
 </script>
@@ -74,6 +83,7 @@ const onNextStepClick = () => {
         :icon-pos="currentStepIndex == items.length - 1 ? 'left' : 'right'"
         class="float-right"
         @click="onNextStepClick"
+        :disabled="disableNextButton"
       >
       </Button>
     </div>

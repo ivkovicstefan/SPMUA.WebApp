@@ -93,6 +93,7 @@ const getAvailableAtDays = (item: any): string => {
 
 const newAppointmentObject = reactive(new Appointment())
 const appointmentTime = ref('')
+const currentStepIndex = ref(0)
 
 const serviceTypeStore = useServiceTypeStore()
 const { serviceTypes } = serviceTypeStore
@@ -179,6 +180,34 @@ const computedAvailableHours = computed(() => {
 const computedAppointmentService = computed(() => {
   return serviceTypes.data.find((st: any) => st.serviceTypeId == newAppointmentObject.serviceTypeId)
 })
+
+const computedIsStepWizardNextButtonDisabled = computed(() => {
+  if (currentStepIndex.value == 0) {
+    return false
+  }
+  else if (currentStepIndex.value == 1) {
+    if (newAppointmentObject.appointmentDate && appointmentTime.value) {
+      return false
+    }
+    else {
+      return true
+    }
+  }
+  else if (currentStepIndex)
+
+  switch (currentStepIndex.value) {
+    case 0: 
+      return false;
+    case 1: 
+      return (newAppointmentObject.appointmentDate && appointmentTime.value) ? false : true
+    case 2:
+      return (newAppointmentObject.customerFirstName.trim().length > 0 &&
+              newAppointmentObject.customerLastName.trim().length > 0 &&
+              newAppointmentObject.customerPhone.trim().length > 0) ? false : true
+  }
+
+  return false
+})
 </script>
 
 <template>
@@ -264,7 +293,11 @@ const computedAppointmentService = computed(() => {
     </div>
     <!-- Book Appointment Section-->
     <div ref="bookAppointmentSection" class="bg-white order-4">
-      <AppStepWizard :items="stepWizardItems">
+      <AppStepWizard 
+        :items="stepWizardItems"
+        :disable-next-button="computedIsStepWizardNextButtonDisabled"
+        @update:step-index="newVal => currentStepIndex = newVal"  
+      >
         <template #step1Content>
           <AppRadioGroup
             v-if="serviceTypes.isFinished"
