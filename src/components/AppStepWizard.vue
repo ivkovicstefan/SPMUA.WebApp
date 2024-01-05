@@ -18,6 +18,18 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false
+  },
+  onReserveClickHandler: {
+    type: Function,
+    required: true
+  },
+  isReservationLoading: {
+    type: Boolean,
+    required: true
+  },
+  isReservationFinished: {
+    type: Boolean,
+    required: true,
   }
 })
 
@@ -40,6 +52,10 @@ const onNextStepClick = () => {
     currentStepIndex.value++
     emits('update:step-index', currentStepIndex.value)
   }
+}
+
+const onReserveClick = () => {
+
 }
 </script>
 
@@ -70,6 +86,7 @@ const onNextStepClick = () => {
     <div class="px-10 py-3 border-t">
       <!-- Actions -->
       <Button
+        v-if="!isReservationLoading && !isReservationFinished"
         v-show="currentStepIndex != 0"
         label="Prethodni korak"
         icon="pi pi-chevron-left"
@@ -78,12 +95,29 @@ const onNextStepClick = () => {
       >
       </Button>
       <Button
-        :label="currentStepIndex == items.length - 1 ? 'Rezerviši' : 'Sledeći korak'"
-        :icon="currentStepIndex == items.length - 1 ? 'pi pi-check' : 'pi pi-chevron-right'"
-        :icon-pos="currentStepIndex == items.length - 1 ? 'left' : 'right'"
+        v-if="currentStepIndex < items.length - 1"
+        label="Sledeći korak"
+        icon="pi pi-chevron-right"
+        icon-pos="right"
         class="float-right"
         @click="onNextStepClick"
         :disabled="disableNextButton"
+      >
+      </Button>
+      <Button
+        v-if="currentStepIndex == items.length - 1 && !isReservationFinished"
+        label="Rezerviši"
+        icon="pi pi-check"
+        class="float-right"
+        @click="onReserveClickHandler"
+        :loading="isReservationLoading"
+      >
+      </Button>
+      <Button
+        v-if="isReservationFinished"
+        label="Nova rezervacija"
+        icon="pi pi-plus"
+        class="float-right"
       >
       </Button>
     </div>

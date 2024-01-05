@@ -6,6 +6,7 @@ import Calendar from 'primevue/calendar'
 import InputText from 'primevue/inputtext'
 import InputMask from 'primevue/inputmask'
 import Button from 'primevue/button'
+import Message from 'primevue/message'
 import { useServiceTypeStore } from '@/stores/service-type.store'
 import { useWorkingHoursStore } from '@/stores/working-hours.store'
 import { useAppointmentStore } from '@/stores/appointment.store'
@@ -110,7 +111,7 @@ const workingHoursStore = useWorkingHoursStore()
 const { workingDays } = workingHoursStore
 
 const appointmentStore = useAppointmentStore()
-const { unavailableDates, availableHours } = appointmentStore
+const { unavailableDates, availableHours, postAppointment } = appointmentStore
 
 workingHoursStore.getWorkingDays()
 
@@ -214,6 +215,10 @@ const computedIsStepWizardNextButtonDisabled = computed(() => {
 
   return false
 })
+
+const onReserveClickHandler = async () => {
+  await appointmentStore.createAppointment(newAppointmentObject)
+}
 </script>
 
 <template>
@@ -302,6 +307,9 @@ const computedIsStepWizardNextButtonDisabled = computed(() => {
       <AppStepWizard 
         :items="stepWizardItems"
         :disable-next-button="computedIsStepWizardNextButtonDisabled"
+        :is-reservation-finished="postAppointment.isFinished"
+        :is-reservation-loading="postAppointment.isLoading"
+        :on-reserve-click-handler="onReserveClickHandler"
         @update:step-index="newVal => currentStepIndex = newVal"  
       >
         <template #step1Content>
@@ -396,8 +404,28 @@ const computedIsStepWizardNextButtonDisabled = computed(() => {
           </div>
         </template>
         <template #step4Content>
+          <div v-if="postAppointment.isFinished">
+            <Message class="!border-l-0 !border-t-2" severity="success" :closable="false">
+              <div class="ml-3">
+                Zahtev za rezervaciju je uspešno poslat!
+                <br>
+                Broj tvoje rezervacije je <b>{{ postAppointment.data }}</b>.
+                <div class="mt-2" v-if="newAppointmentObject.customerEmail.length > 0">
+                  Informacije o rezervaciji su poslate na tvoju email adresu.
+                </div>
+              </div>
+            </Message>
+            <Message class="!border-l-0 !border-t-2" severity="info" :closable="false">
+              <div class="ml-3">
+                Status rezervacije možeš da proveriš klikom <RouterLink to="/gallery"><b>ovde</b></RouterLink>.
+                <div class="mt-2" v-if="newAppointmentObject.customerEmail.length > 0">
+                  O promeni statusa rezervacije dobićeš notifikaciju putem email adrese.
+                </div>
+              </div>
+            </Message>
+          </div>
           <div class="flex flex-col gap-3">
-            <div class="flex flex-col border rounded-xl bg-white py-2 px-3">
+            <div class="flex flex-col border rounded-lg bg-white py-2 px-3">
               <h1 class="text-zinc-400">Usluga</h1>
               <div class="flex justify-between">
                 <div class="flex flex-col">
@@ -408,7 +436,7 @@ const computedIsStepWizardNextButtonDisabled = computed(() => {
                 </div>
               </div>
             </div>
-            <div class="flex flex-col border rounded-xl bg-white py-2 px-3">
+            <div class="flex flex-col border rounded-lg bg-white py-2 px-3">
               <h1 class="text-zinc-400">Termin</h1>
               <div class="flex justify-between">
                 <div class="flex flex-col">
@@ -426,7 +454,7 @@ const computedIsStepWizardNextButtonDisabled = computed(() => {
                 </div>
               </div>
             </div>
-            <div class="flex flex-col border rounded-xl bg-white py-2 px-3">
+            <div class="flex flex-col border rounded-lg bg-white py-2 px-3">
               <h1 class="text-zinc-400">Kontakt podaci</h1>
               <div class="flex justify-between">
                 <div class="flex flex-col">

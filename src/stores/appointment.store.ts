@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useApi } from '@/helpers/Api'
 import { type ApiWrapper } from '@/types/dtos/ApiWrapper'
 import { ReservationResponse } from '@/types/entities/ReservationResponse'
+import { Appointment } from '@/types/entities/Appointment'
 
 export const useAppointmentStore = defineStore('appointment', {
   state: () => {
@@ -9,7 +10,8 @@ export const useAppointmentStore = defineStore('appointment', {
       appointments: useApi('/api/appointment/appointments') as ApiWrapper,
       patchAppointmentStatus: useApi('/api/appointment/appointment/status') as ApiWrapper,
       unavailableDates: useApi('/api/appointment/unavailable-dates') as ApiWrapper,
-      availableHours: useApi('/api/appointment/available-hours') as ApiWrapper
+      availableHours: useApi('/api/appointment/available-hours') as ApiWrapper,
+      postAppointment: useApi('/api/appointment/appointment') as ApiWrapper
     }
   },
   actions: {
@@ -42,6 +44,15 @@ export const useAppointmentStore = defineStore('appointment', {
           date: date
         }
       })
+    },
+    async createAppointment(newAppointmentObject: Appointment): Promise<void> {
+      await this.postAppointment.execute(
+        undefined, 
+        newAppointmentObject, {
+          method: 'POST'
+        },
+        true
+      )
     }
   }
 })
