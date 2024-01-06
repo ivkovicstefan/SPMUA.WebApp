@@ -46,30 +46,57 @@ const menuBarItems = ref([
     <main class="flex-grow">
       <RouterView> </RouterView>
     </main>
-    <footer class="px-10 py-5 lg:px-48">
-      <h1 class="leading-[1] text-[2.35rem] lg:text-5xl mb-6">Lokacija</h1>
-      <p>Kneginje Milice 118</p>
-      <p>35000, Jagodina</p>
-      <Button label="Pokreni navigaciju" outlined class="mt-3"></Button>
-      <h1 class="leading-[1] text-[2.35rem] lg:text-5xl my-6">Kontakt</h1>
-      <p>062 1775 995</p>
-      <p>petraja01@gmail.com</p>
-      <p>samardzicpetra.mua</p>
-      <h1 class="leading-[1] text-[2.35rem] lg:text-5xl my-6">Linkovi</h1>
-      <RouterLink :to="{ name: 'admin-login' }">Administracija</RouterLink>
+    <footer class="flex flex-col px-10 py-5 lg:px-48 mt-6">
+      <div class="grid gird-cols-1 lg:grid-cols-3 gap-6">
+        <div class="flex order-1 lg:order-2 flex-col">
+          <h1 class="text-[2.35rem] lg:text-5xl mb-6">Lokacija</h1>
+          <p>Kneginje Milice 118</p>
+          <p>35000, Jagodina</p>
+          <a href="https://www.google.com/maps/place/Kneginje+Milice+118,+Jagodina+35000/@43.9743832,21.2643638,16.16z/data=!4m6!3m5!1s0x4756c4112e70f4d1:0xeec958f3e799216a!8m2!3d43.9743556!4d21.2648839!16s%2Fg%2F11kbm5zpjj?entry=ttu" target="_blank">
+            <img src="@/assets/map-view.png" class="rounded-lg"/>
+          </a>
+          <Button label="Pokreni navigaciju" outlined class="mt-3 lg:!hidden"></Button>
+        </div>
+        <div class="flex order-2 lg:order-1 flex-col">
+          <h1 class="text-[2.35rem] lg:text-5xl mb-6">Kontakt</h1>
+          <table class="table-auto">
+            <tr>
+              <td class="w-[2em]"><i class="pi pi-phone"></i></td>
+              <td><a class="hover:text-amber-600" href="tel:062 1775 995">062 1775 995</a></td>
+            </tr>
+            <tr>
+              <td><i class="pi pi-envelope"></i></td>
+              <td><a class="hover:text-amber-600" href="mailto:petraja01@gmail.com">petraja01@gmail.com</a></td>
+            </tr>
+            <tr>
+              <td><i class="pi pi-instagram"></i></td>
+              <td><a class="hover:text-amber-600" href="https://www.instagram.com/samardzicpetra.mua/" target="_blank">samardzicpetra.mua</a></td>
+            </tr>
+          </table>
+        </div>
+        <div class="flex order-3 flex-col">
+          <h1 class="text-[2.35rem] lg:text-5xl mb-6">Linkovi</h1>
+          <RouterLink class="hover:text-amber-600" :to="{ name: 'admin-dashboard' }">Administracija</RouterLink>
+          <RouterLink class="hover:text-amber-600" :to="{ name: 'home' }">Provera statusa rezervacije</RouterLink>
+        </div>
 
-      <p class="mt-6">
-        Copyright &copy; {{ new Date().getFullYear() }} Samardžić Petra<br />
-        <span class="font-semibold"
-          >Vebsajt kreirao
-          <a
-            class="text-amber-600"
-            href="https://www.linkedin.com/in/ivkovicstefan/"
-            target="_blank"
-            >Stefan Ivković</a
-          >.
-        </span>
-      </p>
+      </div>
+      <hr class="my-6">
+      <div class="flex flex-col gap-1 lg:flex-row mb-3 justify-start lg:mr-auto lg:ml-auto">
+        <p>
+          Copyright &copy; {{ new Date().getFullYear() }} Samardžić Petra<br />
+        </p>
+        <span class="hidden lg:inline-block">•</span>
+        <p>
+          Vebsajt kreirao
+            <a
+              class="text-amber-600"
+              href="https://www.linkedin.com/in/ivkovicstefan/"
+              target="_blank"
+              >Stefan Ivković</a
+            >
+        </p>
+      </div>
     </footer>
   </div>
 </template>
