@@ -48,6 +48,8 @@ export const useAppointmentStore = defineStore('appointment', {
       })
     },
     async createAppointment(newAppointmentObject: Appointment): Promise<void> {
+      newAppointmentObject.appointmentDate?.setTime(newAppointmentObject.appointmentDate.getTime() - newAppointmentObject.appointmentDate.getTimezoneOffset() * 60000)
+      
       await this.postAppointment.execute(
         undefined, 
         newAppointmentObject, {
