@@ -107,6 +107,11 @@ watch(() => newAppointmentObject.serviceTypeId, () => {
   availableHours.data = []
 }, { deep: true })
 
+watch(() => appointmentTime.value, (newVal) => {
+  const [hours, minutes, seconds] = newVal.split(":").map(Number);
+  newAppointmentObject.appointmentDate?.setHours(hours, minutes, seconds);
+})
+
 const workingHoursStore = useWorkingHoursStore()
 const { workingDays } = workingHoursStore
 
