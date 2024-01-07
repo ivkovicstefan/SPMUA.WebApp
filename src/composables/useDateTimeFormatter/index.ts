@@ -5,8 +5,17 @@ export const useDefaultDateFormatter = (rawDateTime: string): string => {
   return format(new Date(rawDateTime), 'dd/MM/yyyy')
 }
 
-export const useDefaultTimeFormatter = (rawDateTime: string): string => {
-  return format(new Date(rawDateTime), 'HH:mm')
+export const useDefaultTimeFormatter = (rawDateTime: string | Date): string => {
+  switch(typeof rawDateTime) {
+    case 'string':
+      return format(new Date(rawDateTime), 'HH:mm')
+    case 'object': 
+      if (rawDateTime instanceof Date) {
+        return `${rawDateTime.getHours().toString().padStart(2, '0')}:${rawDateTime.getMinutes().toString().padStart(2, '0')}`
+      }    
+  }
+
+  return ''
 }
 
 export const useTimeOnlyToDefaultTimeFormatter = (

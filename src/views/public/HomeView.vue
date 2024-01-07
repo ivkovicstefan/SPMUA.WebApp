@@ -494,7 +494,7 @@ const onReserveClickHandler = async () => {
             </div>
             <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
               <h1 class="text-zinc-400">Termin</h1>
-              <div class="flex justify-between">
+              <div class="flex justify-between" v-if="newAppointmentObject.appointmentDate">
                 <div class="flex flex-col">
                   <h1 class="font-semibold text-lg">
                     {{
@@ -503,9 +503,9 @@ const onReserveClickHandler = async () => {
                   </h1>
                   <h1 class="text-lg">
                     {{
-                      useDefaultTimeFormatter(newAppointmentObject.appointmentDate.toDateString())
+                      useDefaultTimeFormatter(newAppointmentObject.appointmentDate)
                     }}
-                    - {{ '01:00' }}
+                    - {{ useDefaultTimeFormatter(new Date(newAppointmentObject.appointmentDate.getTime() + (computedAppointmentService.serviceTypeDuration) * 60000)) }}
                   </h1>
                 </div>
               </div>
