@@ -49,8 +49,8 @@ const onRadioItemClick = (item: any) => {
   <div class="flex justify-start gap-3 items-left" :class="computedClassList">
     <template v-for="(item, index) in items" :key="index">
       <div
-        class="bg-white border rounded-lg shadow-lg"
-        :class="{ '!bg-black text-white': isActiveRadioItem(item) }"
+        class="bg-white border-t-2 rounded-lg shadow-lg cursor-pointer hover:border-black transition hover:scale-105"
+        :class="{ '!bg-black text-white border-black hover:!scale-100': isActiveRadioItem(item) }"
         @click="onRadioItemClick(item)"
       >
         <slot name="radioItem" :item="item"></slot>
