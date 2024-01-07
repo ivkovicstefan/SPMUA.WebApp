@@ -107,6 +107,7 @@ watch(() => newAppointmentObject.serviceTypeId, () => {
   onMonthChange({ month: new Date().getMonth() + 1, year: new Date().getFullYear()})
   appointmentTime.value = ''
   availableHours.data = []
+  availableHoursLoadedOnce.value = false
 }, { deep: true })
 
 watch(() => appointmentTime.value, (newVal) => {
@@ -175,6 +176,8 @@ const onMonthChange = (event: any) => {
   getUnavailableDates(fromDate, toDate)
 }
 
+onMonthChange({ month: new Date().getMonth() + 1, year: new Date().getFullYear()})
+
 const onAppointmentDateChange = async (e: Date) => {
   await appointmentStore.getAvailableHours(newAppointmentObject.serviceTypeId, e)
   
@@ -231,6 +234,15 @@ const computedIsStepWizardNextButtonDisabled = computed(() => {
 
 const onReserveClickHandler = async () => {
   await appointmentStore.createAppointment(newAppointmentObject)
+}
+
+const onNewReservationClickHandler = () => {
+  appointmentTime.value = ''
+  newAppointmentObject.reset()
+  onMonthChange({ month: new Date().getMonth() + 1, year: new Date().getFullYear()})
+  availableHoursLoadedOnce.value = false
+  postAppointment.reset()
+  availableHours.reset()
 }
 </script>
 
@@ -323,6 +335,7 @@ const onReserveClickHandler = async () => {
         :is-reservation-finished="postAppointment.isFinished"
         :is-reservation-loading="postAppointment.isLoading"
         :on-reserve-click-handler="onReserveClickHandler"
+        :on-new-reservation-click-handler="onNewReservationClickHandler"
         @update:step-index="newVal => currentStepIndex = newVal"  
       >
         <template #step1Content>

@@ -61,6 +61,14 @@ export const useApi = (initialUrl: string): ApiWrapper => {
     }
   }
 
+  const reset = () => {
+    data.value = null
+    response.value = null
+    isLoading.value = false
+    isAborted.value = false
+    isFinished.value = false
+  }
+
   return {
     data,
     response,
@@ -68,6 +76,7 @@ export const useApi = (initialUrl: string): ApiWrapper => {
     isLoading,
     isAborted,
     isFinished,
-    execute
+    execute,
+    reset
   }
 }
