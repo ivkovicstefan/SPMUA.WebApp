@@ -7,6 +7,7 @@ import InputText from 'primevue/inputtext'
 import InputMask from 'primevue/inputmask'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
+import Badge from 'primevue/badge'
 import { useServiceTypeStore } from '@/stores/service-type.store'
 import { useWorkingHoursStore } from '@/stores/working-hours.store'
 import { useAppointmentStore } from '@/stores/appointment.store'
@@ -173,9 +174,15 @@ const onMonthChange = (event: any) => {
   getUnavailableDates(fromDate, toDate)
 }
 
-const onAppointmentDateChange = (e: Date) => {
-  appointmentStore.getAvailableHours(newAppointmentObject.serviceTypeId, e)
+const onAppointmentDateChange = async (e: Date) => {
+  await appointmentStore.getAvailableHours(newAppointmentObject.serviceTypeId, e)
+  
+  if (availableHours.data.length > 0) {
+    availableHoursLoadedOnce.value = true
+  }
 }
+
+const availableHoursLoadedOnce = ref(false)
 
 const computedAvailableHours = computed(() => {
   let availableHoursArray: Array<any> = []
@@ -318,6 +325,10 @@ const onReserveClickHandler = async () => {
         @update:step-index="newVal => currentStepIndex = newVal"  
       >
         <template #step1Content>
+          <div class="flex items-center gap-3 mb-5">
+            <Badge value="1"></Badge>
+            <p>Pritiskom na stavku ispod odaberi željenu uslugu.</p>
+          </div>
           <AppRadioGroup
             v-if="serviceTypes.isFinished"
             v-model:model-value="newAppointmentObject.serviceTypeId"
@@ -339,6 +350,10 @@ const onReserveClickHandler = async () => {
           </AppRadioGroup>
         </template>
         <template #step2Content>
+          <div class="flex items-center gap-3 mb-5">
+            <Badge value="2"></Badge>
+            <p>Pritiskom na željeni dan proveri dostupne termine.</p>
+          </div>
           <Calendar
             v-model:model-value="newAppointmentObject.appointmentDate"
             :showOtherMonths="true"
@@ -352,65 +367,101 @@ const onReserveClickHandler = async () => {
             @date-select="onAppointmentDateChange"
           >
           </Calendar>
-          <AppRadioGroup
-            v-if="availableHours.isFinished"
-            v-model:model-value="appointmentTime"
-            class="z-[10]"
-            :items="computedAvailableHours"
-            :options="{ valueProperty: 'time', itemDirection: 'row' }"
-          >
-            <template #radioItem="{ item }">
-              <div class="p-3 px-5 text-xl">
-                {{ item.time.slice(0, -3) }}
-              </div>
-            </template>
-          </AppRadioGroup>
+          <TransitionGroup tag="div" name="fade">
+            <div 
+              v-show="availableHoursLoadedOnce"
+              class="flex items-center gap-3 mt-3 mb-6">
+              <Badge value="3"></Badge>
+              <p>Pritiskom na stavku ispod odaberi neki od ponuđenih termina.</p>
+            </div>
+            <AppRadioGroup
+              v-if="availableHours.isFinished"
+              v-model:model-value="appointmentTime"
+              class="z-[10]"
+              :items="computedAvailableHours"
+              :options="{ valueProperty: 'time', itemDirection: 'row' }"
+            >
+              <template #radioItem="{ item }">
+                <div class="p-3 px-5 text-xl">
+                  {{ item.time.slice(0, -3) }}
+                </div>
+              </template>
+            </AppRadioGroup>
+          </TransitionGroup>
         </template>
         <template #step3Content>
           <div class="flex flex-col gap-3">
+            <div 
+              class="flex items-center gap-3 mb-3">
+              <Badge value="4"></Badge>
+              <p>Unesi kontakt podatke.</p>
+            </div>
             <div class="flex flex-col gap-2">
-              <label class="text-xl">
+              <label>
                 Ime
-                <span class="text-red-500">*</span>
               </label>
-              <InputText
-                v-model="newAppointmentObject.customerFirstName"
-                placeholder="Ime"
-              ></InputText>
+              <span class="p-input-icon-right">
+                  <i v-show="newAppointmentObject.customerFirstName.trim().length > 0" class="pi pi-check !text-green-500 font-bold" />
+                    <InputText
+                      class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                      v-model="newAppointmentObject.customerFirstName"
+                      placeholder="Ime"
+                    ></InputText>
+              </span>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-xl">
+              <label>
                 Prezime
-                <span class="text-red-500">*</span>
               </label>
-              <InputText
-                v-model="newAppointmentObject.customerLastName"
-                placeholder="Prezime"
-              ></InputText>
+              <span class="p-input-icon-right">
+                  <i v-show="newAppointmentObject.customerLastName.trim().length > 0" class="pi pi-check !text-green-500 font-bold" />
+                  <InputText
+                    class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                    v-model="newAppointmentObject.customerLastName"
+                    placeholder="Prezime"
+                  ></InputText>
+              </span>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-xl"> Email adresa </label>
-              <InputText
-                v-model="newAppointmentObject.customerEmail"
-                placeholder="Email adresa"
-              ></InputText>
+              <label>
+                Email adresa <span class="text-zinc-400 text-sm">(nije obavezno)</span>
+              </label>
+              <span class="p-input-icon-right">
+                <i v-show="newAppointmentObject.customerEmail.trim().length > 0" class="pi pi-bell !text-green-500 font-bold" />
+                <InputText
+                  type="email"
+                  class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                  v-model="newAppointmentObject.customerEmail"
+                  placeholder="Email adresa"
+                ></InputText>
+              </span>
+              <label class="text-sm text-zinc-400">Ostavi svoj email i budi u toku - dobijaj automatska obaveštenja o promenama statusa tvoje rezervacije.</label>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-xl">
+              <label>
                 Broj mobilnog telefona
-                <span class="text-red-500">*</span>
               </label>
-              <InputMask
-                v-model="newAppointmentObject.customerPhone"
-                mask="0699999999"
-                placeholder="0601234567"
-              ></InputMask>
+              <span class="p-input-icon-right">
+                <i v-show="newAppointmentObject.customerPhone.length > 0" class="pi pi-check !text-green-500 font-bold" />
+                <InputMask
+                  class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                  v-model="newAppointmentObject.customerPhone"
+                  mask="0699999999"
+                  placeholder="0601234567"
+                ></InputMask>
+              </span>
             </div>
           </div>
         </template>
         <template #step4Content>
+          <div 
+              v-show="!postAppointment.isFinished"
+              class="flex items-center gap-3 mb-6">
+              <Badge value="5"></Badge>
+              <p>Proveri unete podatke.</p>
+          </div>
           <div v-if="postAppointment.isFinished">
-            <Message class="!border-l-0 !border-t-2" severity="success" :closable="false">
+            <Message class="!border-l-0 !border-t-2 shadow-lg" severity="success" :closable="false">
               <div class="ml-3">
                 Zahtev za rezervaciju je uspešno poslat!
                 <br>
@@ -420,7 +471,7 @@ const onReserveClickHandler = async () => {
                 </div>
               </div>
             </Message>
-            <Message class="!border-l-0 !border-t-2" severity="info" :closable="false">
+            <Message class="!border-l-0 !border-t-2 shadow-lg" severity="info" :closable="false">
               <div class="ml-3">
                 Status rezervacije možeš da proveriš klikom <RouterLink to="/gallery"><b>ovde</b></RouterLink>.
                 <div class="mt-2" v-if="newAppointmentObject.customerEmail.length > 0">
@@ -430,7 +481,7 @@ const onReserveClickHandler = async () => {
             </Message>
           </div>
           <div class="flex flex-col gap-3">
-            <div class="flex flex-col border rounded-lg bg-white py-2 px-3">
+            <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
               <h1 class="text-zinc-400">Usluga</h1>
               <div class="flex justify-between">
                 <div class="flex flex-col">
@@ -441,7 +492,7 @@ const onReserveClickHandler = async () => {
                 </div>
               </div>
             </div>
-            <div class="flex flex-col border rounded-lg bg-white py-2 px-3">
+            <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
               <h1 class="text-zinc-400">Termin</h1>
               <div class="flex justify-between">
                 <div class="flex flex-col">
@@ -459,7 +510,7 @@ const onReserveClickHandler = async () => {
                 </div>
               </div>
             </div>
-            <div class="flex flex-col border rounded-lg bg-white py-2 px-3">
+            <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
               <h1 class="text-zinc-400">Kontakt podaci</h1>
               <div class="flex justify-between">
                 <div class="flex flex-col">
@@ -494,5 +545,17 @@ const onReserveClickHandler = async () => {
 
 :deep(.p-datepicker-today > .p-disabled) {
   @apply bg-white !text-amber-700;
+}
+</style>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
