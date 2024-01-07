@@ -104,6 +104,7 @@ serviceTypeStore.getServiceTypes()
 
 watch(() => newAppointmentObject.serviceTypeId, () => {
   newAppointmentObject.appointmentDate = null
+  onMonthChange({ month: new Date().getMonth() + 1, year: new Date().getFullYear()})
   appointmentTime.value = ''
   availableHours.data = []
 }, { deep: true })
