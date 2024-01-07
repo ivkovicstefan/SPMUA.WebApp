@@ -30,6 +30,10 @@ const props = defineProps({
   isReservationFinished: {
     type: Boolean,
     required: true,
+  },
+  onNewReservationClickHandler: {
+    type: Function,
+    required: true
   }
 })
 
@@ -54,8 +58,9 @@ const onNextStepClick = () => {
   }
 }
 
-const onReserveClick = () => {
-
+const onNewReservationClick = () => {
+  currentStepIndex.value = 0
+  props.onNewReservationClickHandler()
 }
 </script>
 
@@ -118,6 +123,7 @@ const onReserveClick = () => {
         label="Nova rezervacija"
         icon="pi pi-plus"
         class="float-right"
+        @click="onNewReservationClick"
       >
       </Button>
     </div>

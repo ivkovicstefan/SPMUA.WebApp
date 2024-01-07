@@ -5,4 +5,13 @@ export class Appointment {
   customerLastName: string = ''
   customerPhone: string = ''
   customerEmail: string = ''
+
+  reset() {
+    this.serviceTypeId = 1
+    this.appointmentDate = null
+    this.customerFirstName = ''
+    this.customerLastName = ''
+    this.customerPhone = ''
+    this.customerEmail = ''
+  }
 }
