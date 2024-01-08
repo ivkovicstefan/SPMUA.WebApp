@@ -269,7 +269,7 @@ const onNewReservationClickHandler = () => {
     <div class="order-2 lg:order-3 px-10 py-6 lg:px-48 flex flex-col bg-white">
       <h1 class="leading-[1] text-[2.35rem] lg:text-5xl mb-12">Usluge</h1>
       <div class="grid grid-cols-4 gap-6">
-        <div v-for="item in serviceTypes.data" class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl col-span-4 lg:col-span-1 flex flex-col bg-white hover:scale-105 transition duration-200 cursor-pointer">
+        <div v-for="item in serviceTypes.data" class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl col-span-4 lg:col-span-1 flex flex-col bg-white hover:scale-105 transition duration-200 cursor-default">
           <div class="flex p-3 flex-col">
             <h1 class="text-xl font-semibold">{{ item.serviceTypeName }}</h1>
             <p class="text-zinc-400"></p>
