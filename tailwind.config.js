@@ -7,7 +7,7 @@ module.exports = {
       colors: {
         'gold': {
           500: '#D2AC00',
-          600: '#C39F00'
+          600: '#c39900'
         }
       }
     },

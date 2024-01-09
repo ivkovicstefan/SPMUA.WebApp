@@ -62,22 +62,22 @@ const menuBarItems = ref([
           <table class="table-auto">
             <tr>
               <td class="w-[2em]"><i class="pi pi-phone"></i></td>
-              <td><a class="hover:text-amber-600" href="tel:062 1775 995">062 1775 995</a></td>
+              <td><a class="hover:text-gold-600" href="tel:062 1775 995">062 1775 995</a></td>
             </tr>
             <tr>
               <td><i class="pi pi-envelope"></i></td>
-              <td><a class="hover:text-amber-600" href="mailto:petraja01@gmail.com">petraja01@gmail.com</a></td>
+              <td><a class="hover:text-gold-600" href="mailto:petraja01@gmail.com">petraja01@gmail.com</a></td>
             </tr>
             <tr>
               <td><i class="pi pi-instagram"></i></td>
-              <td><a class="hover:text-amber-600" href="https://www.instagram.com/samardzicpetra.mua/" target="_blank">samardzicpetra.mua</a></td>
+              <td><a class="hover:text-gold-600" href="https://www.instagram.com/samardzicpetra.mua/" target="_blank">samardzicpetra.mua</a></td>
             </tr>
           </table>
         </div>
         <div class="flex order-3 flex-col">
           <h1 class="text-[2.35rem] lg:text-5xl mb-6">Linkovi</h1>
-          <RouterLink class="hover:text-amber-600" :to="{ name: 'admin-dashboard' }">Administracija</RouterLink>
-          <RouterLink class="hover:text-amber-600" :to="{ name: 'home' }">Provera statusa rezervacije</RouterLink>
+          <RouterLink class="hover:text-gold-600" :to="{ name: 'admin-dashboard' }">Administracija</RouterLink>
+          <RouterLink class="hover:text-gold-600" :to="{ name: 'home' }">Provera statusa rezervacije</RouterLink>
         </div>
 
       </div>
@@ -90,7 +90,7 @@ const menuBarItems = ref([
         <p>
           Vebsajt kreirao
             <a
-              class="text-amber-600"
+              class="text-gold-600"
               href="https://www.linkedin.com/in/ivkovicstefan/"
               target="_blank"
               >Stefan Ivković</a
