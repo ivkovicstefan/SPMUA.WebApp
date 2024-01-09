@@ -7,6 +7,8 @@ import InputText from 'primevue/inputtext'
 import InputMask from 'primevue/inputmask'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
+import Badge from 'primevue/badge'
+import ProgressSpinner from 'primevue/progressspinner'
 import { useServiceTypeStore } from '@/stores/service-type.store'
 import { useWorkingHoursStore } from '@/stores/working-hours.store'
 import { useAppointmentStore } from '@/stores/appointment.store'
@@ -103,9 +105,16 @@ serviceTypeStore.getServiceTypes()
 
 watch(() => newAppointmentObject.serviceTypeId, () => {
   newAppointmentObject.appointmentDate = null
+  onMonthChange({ month: new Date().getMonth() + 1, year: new Date().getFullYear()})
   appointmentTime.value = ''
   availableHours.data = []
+  availableHoursLoadedOnce.value = false
 }, { deep: true })
+
+watch(() => appointmentTime.value, (newVal) => {
+  const [hours, minutes, seconds] = newVal.split(":").map(Number);
+  newAppointmentObject.appointmentDate?.setHours(hours, minutes, seconds);
+})
 
 const workingHoursStore = useWorkingHoursStore()
 const { workingDays } = workingHoursStore
@@ -168,9 +177,17 @@ const onMonthChange = (event: any) => {
   getUnavailableDates(fromDate, toDate)
 }
 
-const onAppointmentDateChange = (e: Date) => {
-  appointmentStore.getAvailableHours(newAppointmentObject.serviceTypeId, e)
+onMonthChange({ month: new Date().getMonth() + 1, year: new Date().getFullYear()})
+
+const onAppointmentDateChange = async (e: Date) => {
+  await appointmentStore.getAvailableHours(newAppointmentObject.serviceTypeId, e)
+  
+  if (availableHours.data.length > 0) {
+    availableHoursLoadedOnce.value = true
+  }
 }
+
+const availableHoursLoadedOnce = ref(false)
 
 const computedAvailableHours = computed(() => {
   let availableHoursArray: Array<any> = []
@@ -219,6 +236,15 @@ const computedIsStepWizardNextButtonDisabled = computed(() => {
 const onReserveClickHandler = async () => {
   await appointmentStore.createAppointment(newAppointmentObject)
 }
+
+const onNewReservationClickHandler = () => {
+  appointmentTime.value = ''
+  newAppointmentObject.reset()
+  onMonthChange({ month: new Date().getMonth() + 1, year: new Date().getFullYear()})
+  availableHoursLoadedOnce.value = false
+  postAppointment.reset()
+  availableHours.reset()
+}
 </script>
 
 <template>
@@ -243,27 +269,41 @@ const onReserveClickHandler = async () => {
     <!-- Services Section -->
     <div class="order-2 lg:order-3 px-10 py-6 lg:px-48 flex flex-col bg-white">
       <h1 class="leading-[1] text-[2.35rem] lg:text-5xl mb-12">Usluge</h1>
-      <div class="grid grid-cols-4 gap-6">
-        <div v-for="item in serviceTypes.data" class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl col-span-4 lg:col-span-1 flex flex-col bg-white hover:scale-105 transition duration-200 cursor-pointer">
-          <div class="flex p-3 flex-col">
-            <h1 class="text-xl font-semibold">{{ item.serviceTypeName }}</h1>
-            <p class="text-zinc-400"></p>
-            <table class="mt-3 text-sm" cellpadding="5">
-                <tr>
-                    <td class="w-[20px]"><i class="pi pi-money-bill"></i></td>
-                    <td>{{ item.serviceTypePrice.toFixed(2) }} RSD</td>
-                </tr>
-                <tr>
-                    <td><i class="pi pi-clock"></i></td>
-                    <td>{{ item.serviceTypeDuration }} min</td>
-                </tr>
-                <tr>
-                    <td><i class="pi pi-circle-fill text-green-500 text-sm"></i></td>
-                    <td>{{ getAvailableAtDays(item) }}</td>
-                </tr>
-            </table>
+      <TransitionGroup 
+        element="div" 
+        name="fade-500"  
+      >
+        <div v-if="serviceTypes.isFinished" class="grid grid-cols-4 gap-6">
+          <div v-for="item in serviceTypes.data" class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl col-span-4 lg:col-span-1 flex flex-col bg-white hover:scale-105 transition duration-200 cursor-default">
+            <div class="flex p-3 flex-col">
+              <h1 class="text-xl font-semibold">{{ item.serviceTypeName }}</h1>
+              <p class="text-zinc-400"></p>
+              <table class="mt-3 text-sm" cellpadding="5">
+                  <tr>
+                      <td class="w-[20px]"><i class="pi pi-money-bill"></i></td>
+                      <td>{{ item.serviceTypePrice.toFixed(2) }} RSD</td>
+                  </tr>
+                  <tr>
+                      <td><i class="pi pi-clock"></i></td>
+                      <td>{{ item.serviceTypeDuration }} min</td>
+                  </tr>
+                  <tr>
+                      <td><i class="pi pi-circle-fill text-green-500 text-sm"></i></td>
+                      <td>{{ getAvailableAtDays(item) }}</td>
+                  </tr>
+              </table>
+            </div>
           </div>
         </div>
+      </TransitionGroup>
+      <div v-if="serviceTypes.isLoading" class="flex flex-col justify-center h-[300px]">
+        <ProgressSpinner
+            class="mr-auto ml-auto"
+            style="height: 50px; width: 50px"
+            strokeWidth="4"
+            animationDuration=".5s"
+        >
+        </ProgressSpinner>
       </div>
     </div>
     <!-- Gallery Section -->
@@ -310,30 +350,55 @@ const onReserveClickHandler = async () => {
         :is-reservation-finished="postAppointment.isFinished"
         :is-reservation-loading="postAppointment.isLoading"
         :on-reserve-click-handler="onReserveClickHandler"
+        :on-new-reservation-click-handler="onNewReservationClickHandler"
         @update:step-index="newVal => currentStepIndex = newVal"  
       >
         <template #step1Content>
-          <AppRadioGroup
-            v-if="serviceTypes.isFinished"
-            v-model:model-value="newAppointmentObject.serviceTypeId"
-            :items="serviceTypes.data"
-            :options="{ valueProperty: 'serviceTypeId', itemDirection: 'column' }"
+          <TransitionGroup 
+            element="div" 
+            name="fade-500"  
           >
-            <template #radioItem="{ item }">
-              <div class="p-3 flex justify-between">
-                <div class="flex flex-col">
-                  <div class="font-semibold text-lg">{{ item.serviceTypeName }}</div>
-                  <div class="text-zinc-400">{{ item.serviceTypePrice.toFixed(2) }} RSD</div>
+            <div        
+              v-if="serviceTypes.isFinished"      
+              class="flex items-center gap-3 mb-5">
+              <Badge value="1"></Badge>
+              <p>Pritiskom na stavku ispod odaberi željenu uslugu.</p>
+            </div>
+            <AppRadioGroup
+              v-if="serviceTypes.isFinished"      
+              v-model:model-value="newAppointmentObject.serviceTypeId"
+              :items="serviceTypes.data"
+              :options="{ valueProperty: 'serviceTypeId', itemDirection: 'column' }"
+            >
+              <template #radioItem="{ item }">
+                <div class="p-3 flex justify-between">
+                  <div class="flex flex-col">
+                    <div class="font-semibold text-lg">{{ item.serviceTypeName }}</div>
+                    <div class="text-zinc-400">{{ item.serviceTypePrice.toFixed(2) }} RSD</div>
+                  </div>
+                  <div class="self-center flex items-center">
+                    <span class="pi pi-clock mr-2"></span>
+                    <div>{{ item.serviceTypeDuration }} min</div>
+                  </div>
                 </div>
-                <div class="self-center flex items-center">
-                  <span class="pi pi-clock mr-2"></span>
-                  <div>{{ item.serviceTypeDuration }} min</div>
-                </div>
-              </div>
-            </template>
-          </AppRadioGroup>
+              </template>
+            </AppRadioGroup>
+          </TransitionGroup>
+          <div v-if="serviceTypes.isLoading" class="flex flex-col justify-center h-[500px]">
+            <ProgressSpinner
+                class="mr-auto ml-auto"
+                style="height: 50px; width: 50px"
+                strokeWidth="4"
+                animationDuration=".5s"
+            >
+            </ProgressSpinner>
+          </div>
         </template>
         <template #step2Content>
+          <div class="flex items-center gap-3 mb-5">
+            <Badge value="2"></Badge>
+            <p>Pritiskom na željeni dan proveri dostupne termine.</p>
+          </div>
           <Calendar
             v-model:model-value="newAppointmentObject.appointmentDate"
             :showOtherMonths="true"
@@ -347,65 +412,101 @@ const onReserveClickHandler = async () => {
             @date-select="onAppointmentDateChange"
           >
           </Calendar>
-          <AppRadioGroup
-            v-if="availableHours.isFinished"
-            v-model:model-value="appointmentTime"
-            class="z-[10]"
-            :items="computedAvailableHours"
-            :options="{ valueProperty: 'time', itemDirection: 'row' }"
-          >
-            <template #radioItem="{ item }">
-              <div class="p-3 px-5 text-xl">
-                {{ item.time.slice(0, -3) }}
-              </div>
-            </template>
-          </AppRadioGroup>
+          <TransitionGroup tag="div" name="fade">
+            <div 
+              v-show="availableHoursLoadedOnce"
+              class="flex items-center gap-3 mt-3 mb-6">
+              <Badge value="3"></Badge>
+              <p>Pritiskom na stavku ispod odaberi neki od ponuđenih termina.</p>
+            </div>
+            <AppRadioGroup
+              v-if="availableHours.isFinished"
+              v-model:model-value="appointmentTime"
+              class="z-[10]"
+              :items="computedAvailableHours"
+              :options="{ valueProperty: 'time', itemDirection: 'row' }"
+            >
+              <template #radioItem="{ item }">
+                <div class="p-3 px-5 text-xl">
+                  {{ item.time.slice(0, -3) }}
+                </div>
+              </template>
+            </AppRadioGroup>
+          </TransitionGroup>
         </template>
         <template #step3Content>
           <div class="flex flex-col gap-3">
+            <div 
+              class="flex items-center gap-3 mb-3">
+              <Badge value="4"></Badge>
+              <p>Unesi kontakt podatke.</p>
+            </div>
             <div class="flex flex-col gap-2">
-              <label class="text-xl">
+              <label>
                 Ime
-                <span class="text-red-500">*</span>
               </label>
-              <InputText
-                v-model="newAppointmentObject.customerFirstName"
-                placeholder="Ime"
-              ></InputText>
+              <span class="p-input-icon-right">
+                  <i v-show="newAppointmentObject.customerFirstName.trim().length > 0" class="pi pi-check !text-green-500 font-bold" />
+                    <InputText
+                      class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                      v-model="newAppointmentObject.customerFirstName"
+                      placeholder="Ime"
+                    ></InputText>
+              </span>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-xl">
+              <label>
                 Prezime
-                <span class="text-red-500">*</span>
               </label>
-              <InputText
-                v-model="newAppointmentObject.customerLastName"
-                placeholder="Prezime"
-              ></InputText>
+              <span class="p-input-icon-right">
+                  <i v-show="newAppointmentObject.customerLastName.trim().length > 0" class="pi pi-check !text-green-500 font-bold" />
+                  <InputText
+                    class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                    v-model="newAppointmentObject.customerLastName"
+                    placeholder="Prezime"
+                  ></InputText>
+              </span>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-xl"> Email adresa </label>
-              <InputText
-                v-model="newAppointmentObject.customerEmail"
-                placeholder="Email adresa"
-              ></InputText>
+              <label>
+                Email adresa <span class="text-zinc-400 text-sm">(nije obavezno)</span>
+              </label>
+              <span class="p-input-icon-right">
+                <i v-show="newAppointmentObject.customerEmail.trim().length > 0" class="pi pi-bell !text-green-500 font-bold" />
+                <InputText
+                  type="email"
+                  class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                  v-model="newAppointmentObject.customerEmail"
+                  placeholder="Email adresa"
+                ></InputText>
+              </span>
+              <label class="text-sm text-zinc-400">Ostavi svoj email i budi u toku - dobijaj automatska obaveštenja o promenama statusa tvoje rezervacije.</label>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-xl">
+              <label>
                 Broj mobilnog telefona
-                <span class="text-red-500">*</span>
               </label>
-              <InputMask
-                v-model="newAppointmentObject.customerPhone"
-                mask="0699999999"
-                placeholder="0601234567"
-              ></InputMask>
+              <span class="p-input-icon-right">
+                <i v-show="newAppointmentObject.customerPhone.length > 0" class="pi pi-check !text-green-500 font-bold" />
+                <InputMask
+                  class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                  v-model="newAppointmentObject.customerPhone"
+                  mask="0699999999"
+                  placeholder="0601234567"
+                ></InputMask>
+              </span>
             </div>
           </div>
         </template>
         <template #step4Content>
+          <div 
+              v-show="!postAppointment.isFinished"
+              class="flex items-center gap-3 mb-6">
+              <Badge value="5"></Badge>
+              <p>Proveri unete podatke.</p>
+          </div>
           <div v-if="postAppointment.isFinished">
-            <Message class="!border-l-0 !border-t-2" severity="success" :closable="false">
+            <Message class="!border-l-0 !border-t-2 shadow-lg" severity="success" :closable="false">
               <div class="ml-3">
                 Zahtev za rezervaciju je uspešno poslat!
                 <br>
@@ -415,7 +516,7 @@ const onReserveClickHandler = async () => {
                 </div>
               </div>
             </Message>
-            <Message class="!border-l-0 !border-t-2" severity="info" :closable="false">
+            <Message class="!border-l-0 !border-t-2 shadow-lg" severity="info" :closable="false">
               <div class="ml-3">
                 Status rezervacije možeš da proveriš klikom <RouterLink to="/gallery"><b>ovde</b></RouterLink>.
                 <div class="mt-2" v-if="newAppointmentObject.customerEmail.length > 0">
@@ -425,7 +526,7 @@ const onReserveClickHandler = async () => {
             </Message>
           </div>
           <div class="flex flex-col gap-3">
-            <div class="flex flex-col border rounded-lg bg-white py-2 px-3">
+            <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
               <h1 class="text-zinc-400">Usluga</h1>
               <div class="flex justify-between">
                 <div class="flex flex-col">
@@ -436,9 +537,9 @@ const onReserveClickHandler = async () => {
                 </div>
               </div>
             </div>
-            <div class="flex flex-col border rounded-lg bg-white py-2 px-3">
+            <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
               <h1 class="text-zinc-400">Termin</h1>
-              <div class="flex justify-between">
+              <div class="flex justify-between" v-if="newAppointmentObject.appointmentDate">
                 <div class="flex flex-col">
                   <h1 class="font-semibold text-lg">
                     {{
@@ -447,14 +548,14 @@ const onReserveClickHandler = async () => {
                   </h1>
                   <h1 class="text-lg">
                     {{
-                      useDefaultTimeFormatter(newAppointmentObject.appointmentDate.toDateString())
+                      useDefaultTimeFormatter(newAppointmentObject.appointmentDate)
                     }}
-                    - {{ '01:00' }}
+                    - {{ useDefaultTimeFormatter(new Date(newAppointmentObject.appointmentDate.getTime() + (computedAppointmentService.serviceTypeDuration) * 60000)) }}
                   </h1>
                 </div>
               </div>
             </div>
-            <div class="flex flex-col border rounded-lg bg-white py-2 px-3">
+            <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
               <h1 class="text-zinc-400">Kontakt podaci</h1>
               <div class="flex justify-between">
                 <div class="flex flex-col">
@@ -489,5 +590,27 @@ const onReserveClickHandler = async () => {
 
 :deep(.p-datepicker-today > .p-disabled) {
   @apply bg-white !text-amber-700;
+}
+</style>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-500-enter-active,
+.fade-500-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-500-enter-from,
+.fade-500-leave-to {
+  opacity: 0;
 }
 </style>

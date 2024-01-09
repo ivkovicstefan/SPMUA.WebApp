@@ -38,6 +38,8 @@ export const useAppointmentStore = defineStore('appointment', {
       })
     },
     async getAvailableHours(serviceTypeId: number, date: Date): Promise<void> {
+      date.setTime(date.getTime() - date.getTimezoneOffset() * 60000)
+      
       await this.availableHours.execute(undefined, undefined, {
         params: {
           serviceTypeId: serviceTypeId,
@@ -46,6 +48,8 @@ export const useAppointmentStore = defineStore('appointment', {
       })
     },
     async createAppointment(newAppointmentObject: Appointment): Promise<void> {
+      newAppointmentObject.appointmentDate?.setTime(newAppointmentObject.appointmentDate.getTime() - newAppointmentObject.appointmentDate.getTimezoneOffset() * 60000)
+      
       await this.postAppointment.execute(
         undefined, 
         newAppointmentObject, {
