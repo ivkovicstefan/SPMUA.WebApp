@@ -8,6 +8,7 @@ import InputMask from 'primevue/inputmask'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import Badge from 'primevue/badge'
+import ProgressSpinner from 'primevue/progressspinner'
 import { useServiceTypeStore } from '@/stores/service-type.store'
 import { useWorkingHoursStore } from '@/stores/working-hours.store'
 import { useAppointmentStore } from '@/stores/appointment.store'
@@ -268,27 +269,41 @@ const onNewReservationClickHandler = () => {
     <!-- Services Section -->
     <div class="order-2 lg:order-3 px-10 py-6 lg:px-48 flex flex-col bg-white">
       <h1 class="leading-[1] text-[2.35rem] lg:text-5xl mb-12">Usluge</h1>
-      <div class="grid grid-cols-4 gap-6">
-        <div v-for="item in serviceTypes.data" class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl col-span-4 lg:col-span-1 flex flex-col bg-white hover:scale-105 transition duration-200 cursor-default">
-          <div class="flex p-3 flex-col">
-            <h1 class="text-xl font-semibold">{{ item.serviceTypeName }}</h1>
-            <p class="text-zinc-400"></p>
-            <table class="mt-3 text-sm" cellpadding="5">
-                <tr>
-                    <td class="w-[20px]"><i class="pi pi-money-bill"></i></td>
-                    <td>{{ item.serviceTypePrice.toFixed(2) }} RSD</td>
-                </tr>
-                <tr>
-                    <td><i class="pi pi-clock"></i></td>
-                    <td>{{ item.serviceTypeDuration }} min</td>
-                </tr>
-                <tr>
-                    <td><i class="pi pi-circle-fill text-green-500 text-sm"></i></td>
-                    <td>{{ getAvailableAtDays(item) }}</td>
-                </tr>
-            </table>
+      <TransitionGroup 
+        element="div" 
+        name="fade-500"  
+      >
+        <div v-if="serviceTypes.isFinished" class="grid grid-cols-4 gap-6">
+          <div v-for="item in serviceTypes.data" class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl col-span-4 lg:col-span-1 flex flex-col bg-white hover:scale-105 transition duration-200 cursor-default">
+            <div class="flex p-3 flex-col">
+              <h1 class="text-xl font-semibold">{{ item.serviceTypeName }}</h1>
+              <p class="text-zinc-400"></p>
+              <table class="mt-3 text-sm" cellpadding="5">
+                  <tr>
+                      <td class="w-[20px]"><i class="pi pi-money-bill"></i></td>
+                      <td>{{ item.serviceTypePrice.toFixed(2) }} RSD</td>
+                  </tr>
+                  <tr>
+                      <td><i class="pi pi-clock"></i></td>
+                      <td>{{ item.serviceTypeDuration }} min</td>
+                  </tr>
+                  <tr>
+                      <td><i class="pi pi-circle-fill text-green-500 text-sm"></i></td>
+                      <td>{{ getAvailableAtDays(item) }}</td>
+                  </tr>
+              </table>
+            </div>
           </div>
         </div>
+      </TransitionGroup>
+      <div v-if="serviceTypes.isLoading" class="flex flex-col justify-center h-[300px]">
+        <ProgressSpinner
+            class="mr-auto ml-auto"
+            style="height: 50px; width: 50px"
+            strokeWidth="4"
+            animationDuration=".5s"
+        >
+        </ProgressSpinner>
       </div>
     </div>
     <!-- Gallery Section -->
@@ -339,29 +354,45 @@ const onNewReservationClickHandler = () => {
         @update:step-index="newVal => currentStepIndex = newVal"  
       >
         <template #step1Content>
-          <div class="flex items-center gap-3 mb-5">
-            <Badge value="1"></Badge>
-            <p>Pritiskom na stavku ispod odaberi željenu uslugu.</p>
-          </div>
-          <AppRadioGroup
-            v-if="serviceTypes.isFinished"
-            v-model:model-value="newAppointmentObject.serviceTypeId"
-            :items="serviceTypes.data"
-            :options="{ valueProperty: 'serviceTypeId', itemDirection: 'column' }"
+          <TransitionGroup 
+            element="div" 
+            name="fade-500"  
           >
-            <template #radioItem="{ item }">
-              <div class="p-3 flex justify-between">
-                <div class="flex flex-col">
-                  <div class="font-semibold text-lg">{{ item.serviceTypeName }}</div>
-                  <div class="text-zinc-400">{{ item.serviceTypePrice.toFixed(2) }} RSD</div>
+            <div        
+              v-if="serviceTypes.isFinished"      
+              class="flex items-center gap-3 mb-5">
+              <Badge value="1"></Badge>
+              <p>Pritiskom na stavku ispod odaberi željenu uslugu.</p>
+            </div>
+            <AppRadioGroup
+              v-if="serviceTypes.isFinished"      
+              v-model:model-value="newAppointmentObject.serviceTypeId"
+              :items="serviceTypes.data"
+              :options="{ valueProperty: 'serviceTypeId', itemDirection: 'column' }"
+            >
+              <template #radioItem="{ item }">
+                <div class="p-3 flex justify-between">
+                  <div class="flex flex-col">
+                    <div class="font-semibold text-lg">{{ item.serviceTypeName }}</div>
+                    <div class="text-zinc-400">{{ item.serviceTypePrice.toFixed(2) }} RSD</div>
+                  </div>
+                  <div class="self-center flex items-center">
+                    <span class="pi pi-clock mr-2"></span>
+                    <div>{{ item.serviceTypeDuration }} min</div>
+                  </div>
                 </div>
-                <div class="self-center flex items-center">
-                  <span class="pi pi-clock mr-2"></span>
-                  <div>{{ item.serviceTypeDuration }} min</div>
-                </div>
-              </div>
-            </template>
-          </AppRadioGroup>
+              </template>
+            </AppRadioGroup>
+          </TransitionGroup>
+          <div v-if="serviceTypes.isLoading" class="flex flex-col justify-center h-[500px]">
+            <ProgressSpinner
+                class="mr-auto ml-auto"
+                style="height: 50px; width: 50px"
+                strokeWidth="4"
+                animationDuration=".5s"
+            >
+            </ProgressSpinner>
+          </div>
         </template>
         <template #step2Content>
           <div class="flex items-center gap-3 mb-5">
@@ -570,6 +601,16 @@ const onNewReservationClickHandler = () => {
 
 .fade-enter-from,
 .fade-leave-to {
+  opacity: 0;
+}
+
+.fade-500-enter-active,
+.fade-500-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-500-enter-from,
+.fade-500-leave-to {
   opacity: 0;
 }
 </style>
