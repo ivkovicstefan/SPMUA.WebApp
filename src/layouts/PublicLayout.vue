@@ -2,6 +2,13 @@
 import { ref } from 'vue'
 import Menubar from 'primevue/Menubar'
 import Button from 'primevue/button'
+import ProgressSpinner from 'primevue/progressspinner'
+import { useWorkingHoursStore } from '@/stores/working-hours.store';
+
+const workingHoursStore = useWorkingHoursStore()
+const { workingDays } = workingHoursStore
+
+workingHoursStore.getWorkingDays()
 
 const menuBarItems = ref([
   {
@@ -56,6 +63,31 @@ const menuBarItems = ref([
             <img src="@/assets/map-view.png" class="rounded-lg"/>
           </a>
           <Button label="Pokreni navigaciju" outlined class="mt-3 lg:!hidden"></Button>
+        </div>
+        <div class="flex order-1 lg:order-2 flex-col">
+          <h1 class="text-[2.35rem] lg:text-5xl mb-6">Radno vreme</h1>
+          <div v-if="workingDays.isFinished">
+            <table class="text-center">
+              <tr v-for="(item, index) in workingDays.data" :key="index">
+                <td class="pr-3">
+                  <i class="block w-[0.25em] h-[1em] bg-black rounded" :class="[item.isActive ? 'bg-green-500' : 'bg-zinc-300']"></i>
+                </td>
+                <td class="text-left pr-3">{{ item.workingDayName }}</td>
+                <td v-if="item.isActive" class="px-3">{{ item.startTime.slice(0, -3) }}</td>
+                <td v-if="item.isActive">-</td>
+                <td v-if="item.isActive" class="px-3">{{ item.endTime.slice(0, -3) }}</td>
+              </tr>
+            </table>
+          </div>
+          <div v-if="workingDays.isLoading">
+            <ProgressSpinner
+              class="mr-auto ml-auto"
+              style="height: 50px; width: 50px"
+              strokeWidth="4"
+              animationDuration=".5s"
+            >
+            </ProgressSpinner>
+          </div>
         </div>
         <div class="flex order-2 lg:order-1 flex-col">
           <h1 class="text-[2.35rem] lg:text-5xl mb-6">Kontakt</h1>
