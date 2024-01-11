@@ -73,6 +73,7 @@ const menuBarItems = ref([
                   <i class="block w-[0.25em] h-[1em] bg-black rounded" :class="[item.isActive ? 'bg-green-500' : 'bg-zinc-300']"></i>
                 </td>
                 <td class="text-left pr-3">{{ item.workingDayName }}</td>
+                <td colspan="3" v-if="!item.isActive" class="text-sm px-3">ZATVORENO</td>
                 <td v-if="item.isActive" class="px-3">{{ item.startTime.slice(0, -3) }}</td>
                 <td v-if="item.isActive">-</td>
                 <td v-if="item.isActive" class="px-3">{{ item.endTime.slice(0, -3) }}</td>
