@@ -41,15 +41,19 @@ const onLoginClick = async () => {
           errorMessage
         }}</Message>
 
-        <Button class="text-center" :loading="authStore.isApiRequestLoading" @click="onLoginClick()"
-          >Uloguj se</Button
+        <Button 
+          class="text-center" 
+          :loading="authStore.isApiRequestLoading" 
+          @click="onLoginClick()"
+          label="Uloguj se"
         >
+        </Button>
       </div>
       <div class="flex flex-col gap-2 border rounded bg-white p-6">
         <p class="text-sm text-medium text-justify">
           Neovlašćen pristup biće sankcionisan merama zakona Republike Srbije. Za povratak na
           početnu stranicu
-          <router-link to="/"><span class="text-amber-500">klikni ovde</span>.</router-link>
+          <router-link to="/"><span class="text-gold-600">klikni ovde</span>.</router-link>
         </p>
       </div>
     </div>
