@@ -41,9 +41,13 @@ const onLoginClick = async () => {
           errorMessage
         }}</Message>
 
-        <Button class="text-center" :loading="authStore.isApiRequestLoading" @click="onLoginClick()"
-          >Uloguj se</Button
+        <Button 
+          class="text-center" 
+          :loading="authStore.isApiRequestLoading" 
+          @click="onLoginClick()"
+          label="Uloguj se"
         >
+        </Button>
       </div>
       <div class="flex flex-col gap-2 border rounded bg-white p-6">
         <p class="text-sm text-medium text-justify">
