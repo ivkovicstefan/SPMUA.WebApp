@@ -53,7 +53,7 @@ const onLoginClick = async () => {
         <p class="text-sm text-medium text-justify">
           Neovlašćen pristup biće sankcionisan merama zakona Republike Srbije. Za povratak na
           početnu stranicu
-          <router-link to="/"><span class="text-amber-500">klikni ovde</span>.</router-link>
+          <router-link to="/"><span class="text-gold-600">klikni ovde</span>.</router-link>
         </p>
       </div>
     </div>
