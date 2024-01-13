@@ -1,16 +1,66 @@
 <script setup lang="ts">
+import { computed, watch, ref } from 'vue'
+import Button from 'primevue/button'
 import Panel from 'primevue/panel'
 import Badge from 'primevue/badge'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import ProgressSpinner from 'primevue/progressspinner'
+import Dialog from 'primevue/dialog'
+import InputText from 'primevue/inputtext'
+import Calendar from 'primevue/calendar'
 import { useVacationStore } from '@/stores/vacation.store'
-import { useDefaultDateFormatter } from '@/composables/useDateTimeFormatter'
+import { useDefaultDateFormatter, getTomorowDate } from '@/composables/useDateTimeFormatter'
+import { DialogMode } from '@/types/Enums'
+import { Vacation } from '@/types/entities/Vacation'
 
 const vacationStore = useVacationStore()
-const { vacations } = vacationStore
+const { vacations, postVacation } = vacationStore
 
 vacationStore.getVacations()
+
+const vacationRecord = ref(new Vacation())
+const vacationDates = ref()
+
+watch(vacationDates, (newValue) => {
+  vacationRecord.value.startDate = newValue[0]
+
+  if (!newValue[1]) {
+    vacationRecord.value.endDate = newValue[0]
+  }
+  else {
+    vacationRecord.value.endDate = newValue[1]
+  }
+
+  console.log(vacationRecord.value)
+})
+
+const vacationDialogMode = ref(0)
+const isVacationDetailDialogVisible = ref(false)
+
+const computedVacationDetailDialogHeader = computed(() => {
+  switch (vacationDialogMode.value) {
+    case DialogMode.Add:
+      return 'Novi odmor'
+    case DialogMode.Edit:
+      return 'Izmeni odmor'
+    default: 
+      return ''
+  }
+})
+
+const onNewVacationClick = (): void => {
+  vacationDialogMode.value = DialogMode.Add
+  isVacationDetailDialogVisible.value = true
+}
+
+const onSaveVacationClick = async (): void => {
+  if (vacationDialogMode.value == DialogMode.Add) {
+    await vacationStore.createVacation(vacationRecord.value)
+    await vacationStore.getVacations()
+    isVacationDetailDialogVisible.value = false
+  }
+}
 </script>
 
 <template>
@@ -19,16 +69,22 @@ vacationStore.getVacations()
   </div>
   <div class="grid grid-cols-4">
     <div class="col-span-4 lg:col-span-2">
-      <Panel toggleable>
+      <Panel>
         <template #header>
-          <div class="flex">
-            <h1 class="font-semibold">Godišnji odmori</h1>
-            <Badge
-              v-if="vacations.isFinished"
-              :value="vacations.data.length"
-              class="ml-2"
-            ></Badge>
-          </div>
+          <h1 class="font-semibold">Godišnji odmori</h1>
+          <Badge
+            v-if="vacations.isFinished"
+            :value="vacations.data.length"
+            class="ml-2"
+          ></Badge>
+          <Button
+            class="!ml-auto"
+            size="small"
+            icon="pi pi-plus"
+            label="Novi odmor"
+            @click="onNewVacationClick"
+          >
+          </Button>
         </template>
         <div v-if="vacations.isFinished">
           <DataTable
@@ -63,6 +119,35 @@ vacationStore.getVacations()
               </template>
             </Column>
           </DataTable>
+          <Dialog
+            v-model:visible="isVacationDetailDialogVisible"
+            :header="computedVacationDetailDialogHeader"
+            class="w-[100%] lg:w-auto"
+            modal
+          >
+            <div class="flex flex-col gap-2">
+              <label for="txtVacationName">Naziv odmora</label>
+              <InputText id="txtVacationName" type="text" v-model="vacationRecord.vacationName" />
+              <label>Dani</label>
+              <Calendar
+                inline
+                v-model="vacationDates"
+                selection-mode="range"
+                :manual-input="false"
+                :min-date="getTomorowDate()"
+              >
+              </Calendar>
+            </div>
+            <template #footer>
+              <Button 
+                icon="pi pi-save"
+                label="Sačuvaj"
+                class="!m-0"
+                :loading="postVacation.isLoading"
+                @click="onSaveVacationClick"
+              ></Button>
+            </template>
+          </Dialog>
         </div>
         <div class="flex items-center min-h-[300px]" v-if="vacations.isLoading">
           <ProgressSpinner
@@ -77,6 +162,10 @@ vacationStore.getVacations()
 </template>
 
 <style scoped>
+:deep(.p-panel-header) {
+  @apply px-[1.25em] py-[0.75em]
+}
+
 :deep(.p-panel-content) {
   @apply p-0;
 }
