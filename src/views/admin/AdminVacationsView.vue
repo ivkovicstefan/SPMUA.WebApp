@@ -9,6 +9,7 @@ import ProgressSpinner from 'primevue/progressspinner'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Calendar from 'primevue/calendar'
+import InlineMessage from 'primevue/inlinemessage'
 import { useVacationStore } from '@/stores/vacation.store'
 import { useDefaultDateFormatter, getTomorowDate } from '@/composables/useDateTimeFormatter'
 import { DialogMode } from '@/types/Enums'
@@ -86,7 +87,7 @@ const onSaveVacationClick = async (): void => {
           >
           </Button>
         </template>
-        <div v-if="vacations.isFinished">
+        <div class="flex flex-col" v-if="vacations.isFinished">
           <DataTable
             v-if="vacations.data.length > 0"
             :value="vacations.data"
@@ -119,6 +120,13 @@ const onSaveVacationClick = async (): void => {
               </template>
             </Column>
           </DataTable>
+          <InlineMessage
+            v-if="vacations.data == 0"
+            class="!m-5"
+            severity="info"
+          >
+            Trenutno nema unetih godišnjih odmora.
+          </InlineMessage>
           <Dialog
             v-model:visible="isVacationDetailDialogVisible"
             :header="computedVacationDetailDialogHeader"
