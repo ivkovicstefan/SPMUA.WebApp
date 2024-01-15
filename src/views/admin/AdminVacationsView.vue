@@ -77,6 +77,11 @@ const onEditVacationRowClick = (e: Vacation): void => {
 
   isVacationDetailDialogVisible.value = true
 }
+
+const onDeleteVacationRowClick = async (e: number): Promise<void> => {
+  await vacationStore.removeVacation(e)
+  await vacationStore.getVacations()
+}
 </script>
 
 <template>
@@ -141,6 +146,12 @@ const onEditVacationRowClick = (e: Vacation): void => {
                   icon="pi pi-pencil"
                   rounded
                   @click="onEditVacationRowClick(slotProps.data)"
+                ></Button>
+                <Button
+                  class="!bg-transparent !p-0 !h-[32px] !w-[32px] !text-gray-400 !border-none hover:!bg-gray-100 hover:!text-black focus:!shadow-none"
+                  icon="pi pi-times"
+                  rounded
+                  @click="onDeleteVacationRowClick(slotProps.data.vacationId)"
                 ></Button>
               </template>
             </Column>
