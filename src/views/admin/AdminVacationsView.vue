@@ -32,8 +32,6 @@ watch(vacationDates, (newValue) => {
   else {
     vacationRecord.value.endDate = newValue[1]
   }
-
-  console.log(vacationRecord.value)
 })
 
 const vacationDialogMode = ref(0)
@@ -59,8 +57,25 @@ const onSaveVacationClick = async (): void => {
   if (vacationDialogMode.value == DialogMode.Add) {
     await vacationStore.createVacation(vacationRecord.value)
     await vacationStore.getVacations()
-    isVacationDetailDialogVisible.value = false
   }
+  else if (vacationDialogMode.value == DialogMode.Edit) {
+    await vacationStore.updateVacation(vacationRecord.value)
+    await vacationStore.getVacations()
+  }
+
+  isVacationDetailDialogVisible.value = false
+}
+
+const onEditVacationRowClick = (e: Vacation): void => {
+  vacationDialogMode.value = DialogMode.Edit
+
+  vacationRecord.value.vacationId = e.vacationId
+  vacationRecord.value.vacationName = e.vacationName
+  vacationRecord.value.startDate = e.startDate
+  vacationRecord.value.endDate = e.endDate
+  vacationDates.value = [new Date(e.startDate), new Date(e.endDate)]
+
+  isVacationDetailDialogVisible.value = true
 }
 </script>
 
@@ -117,6 +132,16 @@ const onSaveVacationClick = async (): void => {
                 <div class="text-center">
                   {{ useDefaultDateFormatter(slotProps.data.endDate) }}
                 </div>
+              </template>
+            </Column>
+            <Column>
+              <template #body="slotProps">
+                <Button
+                  class="!bg-transparent !p-0 !h-[32px] !w-[32px] !text-gray-400 !border-none hover:!bg-gray-100 hover:!text-black focus:!shadow-none"
+                  icon="pi pi-pencil"
+                  rounded
+                  @click="onEditVacationRowClick(slotProps.data)"
+                ></Button>
               </template>
             </Column>
           </DataTable>

@@ -7,7 +7,8 @@ export const useVacationStore = defineStore('vacation', {
   state: () => {
     return {
       vacations: useApi('/api/vacation/vacations') as ApiWrapper,
-      postVacation: useApi('/api/vacation/vacation') as ApiWrapper
+      postVacation: useApi('/api/vacation/vacation') as ApiWrapper,
+      putVacation: useApi('/api/vacation/vacation') as ApiWrapper
     }
   },
   actions: {
@@ -21,6 +22,16 @@ export const useVacationStore = defineStore('vacation', {
         method: 'POST'
         },
         true)
+    },
+    async updateVacation(vacation: Vacation): Promise<void> {
+      await this.putVacation.execute(
+        undefined,
+        vacation,
+        {
+          method: 'PUT'
+        },
+        true
+      )
     }
   }
 })
