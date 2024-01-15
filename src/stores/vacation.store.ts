@@ -8,7 +8,8 @@ export const useVacationStore = defineStore('vacation', {
     return {
       vacations: useApi('/api/vacation/vacations') as ApiWrapper,
       postVacation: useApi('/api/vacation/vacation') as ApiWrapper,
-      putVacation: useApi('/api/vacation/vacation') as ApiWrapper
+      putVacation: useApi('/api/vacation/vacation') as ApiWrapper,
+      deleteVacation: useApi('/api/vacation/vacation/:id') as ApiWrapper
     }
   },
   actions: {
@@ -29,6 +30,16 @@ export const useVacationStore = defineStore('vacation', {
         vacation,
         {
           method: 'PUT'
+        },
+        true
+      )
+    },
+    async removeVacation(vacationId: number): Promise<void> {
+      await this.deleteVacation.execute(
+        '/api/vacation/vacation/' + vacationId,
+        undefined,
+        {
+          method: 'DELETE'
         },
         true
       )
