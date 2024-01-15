@@ -53,7 +53,7 @@ const onNewVacationClick = (): void => {
   isVacationDetailDialogVisible.value = true
 }
 
-const onSaveVacationClick = async (): void => {
+const onSaveVacationClick = async (): Promise<void> => {
   if (vacationDialogMode.value == DialogMode.Add) {
     await vacationStore.createVacation(vacationRecord.value)
     await vacationStore.getVacations()
