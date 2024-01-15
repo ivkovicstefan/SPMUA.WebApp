@@ -5,6 +5,7 @@ import Panel from 'primevue/panel'
 import Badge from 'primevue/badge'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import Menu from 'primevue/menu'
 import ProgressSpinner from 'primevue/progressspinner'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
@@ -34,6 +35,29 @@ watch(vacationDates, (newValue) => {
   }
 })
 
+const tableItemsMenu = ref();
+const tableItemsMenuItems = ref([
+  {
+      label: 'Izmeni',
+      icon: 'pi pi-pencil',
+      command: () => {
+        onEditVacationRowClick()
+      }
+  },
+  {
+      label: 'Obriši',
+      icon: 'pi pi-times',
+      command: () => {
+        onDeleteVacationRowClick(vacationRecord.value.vacationId)
+      }
+  }
+]);
+
+const onRowMenuClick = (e: any, selectedVacation: Vacation) => {
+  vacationRecord.value = selectedVacation
+  tableItemsMenu.value.toggle(e);
+};
+
 const vacationDialogMode = ref(0)
 const isVacationDetailDialogVisible = ref(false)
 
@@ -53,7 +77,7 @@ const onNewVacationClick = (): void => {
   isVacationDetailDialogVisible.value = true
 }
 
-const onSaveVacationClick = async (): void => {
+const onSaveVacationClick = async (): Promise<void> => {
   if (vacationDialogMode.value == DialogMode.Add) {
     await vacationStore.createVacation(vacationRecord.value)
     await vacationStore.getVacations()
@@ -66,15 +90,9 @@ const onSaveVacationClick = async (): void => {
   isVacationDetailDialogVisible.value = false
 }
 
-const onEditVacationRowClick = (e: Vacation): void => {
+const onEditVacationRowClick = (): void => {
   vacationDialogMode.value = DialogMode.Edit
-
-  vacationRecord.value.vacationId = e.vacationId
-  vacationRecord.value.vacationName = e.vacationName
-  vacationRecord.value.startDate = e.startDate
-  vacationRecord.value.endDate = e.endDate
-  vacationDates.value = [new Date(e.startDate), new Date(e.endDate)]
-
+  vacationDates.value = [new Date(vacationRecord.value.startDate), new Date(vacationRecord.value.endDate)]
   isVacationDetailDialogVisible.value = true
 }
 
@@ -143,16 +161,19 @@ const onDeleteVacationRowClick = async (e: number): Promise<void> => {
               <template #body="slotProps">
                 <Button
                   class="!bg-transparent !p-0 !h-[32px] !w-[32px] !text-gray-400 !border-none hover:!bg-gray-100 hover:!text-black focus:!shadow-none"
-                  icon="pi pi-pencil"
+                  icon="pi pi-ellipsis-v"
                   rounded
-                  @click="onEditVacationRowClick(slotProps.data)"
+                  aria-haspopup="true" 
+                  aria-controls="overlay_menu"
+                  @click="onRowMenuClick($event, slotProps.data)"
                 ></Button>
-                <Button
-                  class="!bg-transparent !p-0 !h-[32px] !w-[32px] !text-gray-400 !border-none hover:!bg-gray-100 hover:!text-black focus:!shadow-none"
-                  icon="pi pi-times"
-                  rounded
-                  @click="onDeleteVacationRowClick(slotProps.data.vacationId)"
-                ></Button>
+                <Menu
+                  id="overlay_menu"
+                  ref="tableItemsMenu"
+                  :model="tableItemsMenuItems"
+                  popup  
+                >
+                </Menu>
               </template>
             </Column>
           </DataTable>
