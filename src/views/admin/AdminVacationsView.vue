@@ -17,7 +17,7 @@ import { DialogMode } from '@/types/Enums'
 import { Vacation } from '@/types/entities/Vacation'
 
 const vacationStore = useVacationStore()
-const { vacations, postVacation } = vacationStore
+const { vacations, postVacation, putVacation, deleteVacation } = vacationStore
 
 vacationStore.getVacations()
 
@@ -125,7 +125,7 @@ const onDeleteVacationRowClick = async (e: number): Promise<void> => {
           >
           </Button>
         </template>
-        <div class="flex flex-col" v-if="vacations.isFinished">
+        <div class="flex flex-col" v-if="vacations.isFinished && deleteVacation.isFinished">
           <DataTable
             v-if="vacations.data.length > 0"
             :value="vacations.data"
@@ -208,13 +208,13 @@ const onDeleteVacationRowClick = async (e: number): Promise<void> => {
                 icon="pi pi-save"
                 label="Sačuvaj"
                 class="!m-0"
-                :loading="postVacation.isLoading"
+                :loading="postVacation.isLoading || putVacation.isLoading"
                 @click="onSaveVacationClick"
               ></Button>
             </template>
           </Dialog>
         </div>
-        <div class="flex items-center min-h-[300px]" v-if="vacations.isLoading">
+        <div class="flex items-center min-h-[300px]" v-if="vacations.isLoading || deleteVacation.isLoading">
           <ProgressSpinner
             style="height: 50px; width: 50px"
             strokeWidth="4"
