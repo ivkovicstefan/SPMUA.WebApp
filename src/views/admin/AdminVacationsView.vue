@@ -125,7 +125,7 @@ const onDeleteVacationRowClick = async (e: number): Promise<void> => {
           >
           </Button>
         </template>
-        <div class="flex flex-col" v-if="vacations.isFinished && deleteVacation.isFinished">
+        <div class="flex flex-col" v-if="vacations.isFinished && !deleteVacation.isLoading">
           <DataTable
             v-if="vacations.data.length > 0"
             :value="vacations.data"
