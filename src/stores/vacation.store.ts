@@ -17,6 +17,9 @@ export const useVacationStore = defineStore('vacation', {
       await this.vacations.execute(undefined, undefined, undefined, true)
     },
     async createVacation(newVacation: Vacation): Promise<void> {
+      newVacation.startDate.setTime(newVacation.startDate.getTime() - newVacation.startDate.getTimezoneOffset() * 60000)
+      newVacation.endDate.setTime(newVacation.endDate.getTime() - newVacation.endDate.getTimezoneOffset() * 60000)
+
       await this.postVacation.execute(
         undefined, 
         newVacation, {
@@ -25,6 +28,9 @@ export const useVacationStore = defineStore('vacation', {
         true)
     },
     async updateVacation(vacation: Vacation): Promise<void> {
+      vacation.startDate.setTime(vacation.startDate.getTime() - vacation.startDate.getTimezoneOffset() * 60000)
+      vacation.endDate.setTime(vacation.endDate.getTime() - vacation.endDate.getTimezoneOffset() * 60000)
+
       await this.putVacation.execute(
         undefined,
         vacation,
