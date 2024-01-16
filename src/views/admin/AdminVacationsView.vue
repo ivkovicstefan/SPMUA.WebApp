@@ -73,6 +73,8 @@ const computedVacationDetailDialogHeader = computed(() => {
 })
 
 const onNewVacationClick = (): void => {
+  vacationRecord.value = new Vacation()
+  vacationDates.value = []
   vacationDialogMode.value = DialogMode.Add
   isVacationDetailDialogVisible.value = true
 }
