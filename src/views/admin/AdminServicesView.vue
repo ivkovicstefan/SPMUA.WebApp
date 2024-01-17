@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { type Ref, ref } from 'vue'
+import { type Ref, ref, computed } from 'vue'
 import Panel from 'primevue/panel'
+import Badge from 'primevue/badge'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -10,29 +11,57 @@ import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
 import { useServiceTypeStore } from '@/stores/service-type.store'
+import { ServiceType } from '@/types/entities/ServiceType'
+import { DialogMode } from '@/types/Enums'
 
 const serviceTypeStore = useServiceTypeStore()
-const { serviceTypes, putServiceType } = serviceTypeStore
+const { serviceTypes, postServiceType, putServiceType } = serviceTypeStore
 
 serviceTypeStore.getServiceTypes()
 
-const isEditServiceTypeModalVisible: Ref<boolean> = ref(false)
-const editServiceTypeObject: Ref<any> = ref({})
+const serviceTypeRecord: Ref<any> = ref(new ServiceType())
+const isServiceTypeDetailDialogVisible: Ref<boolean> = ref(false)
+const serviceTypeDialogMode = ref(0)
+
+const computedServiceTypeDetailDialogHeader = computed(() => {
+  switch (serviceTypeDialogMode.value) {
+    case DialogMode.Add:
+      return 'Nova usluga'
+    case DialogMode.Edit:
+      return 'Izmeni uslugu'
+    default: 
+      return ''
+  }
+})
+
+const onNewServiceTypeClick = () => {
+  serviceTypeRecord.value = new ServiceType()
+  serviceTypeDialogMode.value = DialogMode.Add
+  isServiceTypeDetailDialogVisible.value = true
+}
 
 const onEditServiceTypeRowClick = (serviceTypeId: number): void => {
-  editServiceTypeObject.value = serviceTypes.data.find(
+  serviceTypeRecord.value = serviceTypes.data.find(
     (st: any) => st.serviceTypeId == serviceTypeId
   )
 
-  isEditServiceTypeModalVisible.value = true
+  serviceTypeDialogMode.value = DialogMode.Edit
+
+  isServiceTypeDetailDialogVisible.value = true
 }
 
 const onSaveServiceTypeClick = async () => {
-  await serviceTypeStore.updateServiceType(editServiceTypeObject.value)
+  if (serviceTypeDialogMode.value == DialogMode.Add) {
+    await serviceTypeStore.createServiceType(serviceTypeRecord.value)
+    serviceTypeStore.getServiceTypes()
+  }
+  else if (serviceTypeDialogMode.value == DialogMode.Edit) {
+    await serviceTypeStore.updateServiceType(serviceTypeRecord.value)
+    serviceTypeStore.getServiceTypes()
 
-  isEditServiceTypeModalVisible.value = false
+  }
 
-  serviceTypeStore.getServiceTypes()
+  isServiceTypeDetailDialogVisible.value = false
 }
 </script>
 
@@ -41,9 +70,22 @@ const onSaveServiceTypeClick = async () => {
 
   <div class="grid grid-cols-4">
     <div class="col-span-4 lg:col-span-3 xl:col-span-2">
-      <Panel toggleable>
+      <Panel>
         <template #header>
-          <h1 class="font-semibold">Izmeni usluge</h1>
+          <h1 class="font-semibold">Usluge</h1>
+          <Badge
+            v-if="serviceTypes.isFinished"
+            :value="serviceTypes.data.length"
+            class="ml-2"
+          ></Badge>
+          <Button
+            class="!ml-auto"
+            size="small"
+            icon="pi pi-plus"
+            label="Nova usluga"
+            @click="onNewServiceTypeClick"
+          >
+          </Button>
         </template>
         <div class="flex flex-col" v-if="serviceTypes.isFinished">
           <DataTable
@@ -77,23 +119,23 @@ const onSaveServiceTypeClick = async () => {
             </Column>
           </DataTable>
           <Dialog
-            v-model:visible="isEditServiceTypeModalVisible"
-            header="Izmeni uslugu"
+            v-model:visible="isServiceTypeDetailDialogVisible"
+            :header="computedServiceTypeDetailDialogHeader"
             class="w-[100%] lg:w-auto"
             modal
           >
             <div class="grid grid-cols-2 gap-6">
               <div class="col-span-2 lg:col-span-1 flex flex-col gap-2">
                 <label for="username">Naziv usluge</label>
-                <InputText type="text" v-model="editServiceTypeObject.serviceTypeName" />
+                <InputText type="text" v-model="serviceTypeRecord.serviceTypeName" />
                 <label for="username">Cena</label>
                 <div class="p-inputgroup">
-                  <InputNumber type="text" v-model="editServiceTypeObject.serviceTypePrice" />
+                  <InputNumber type="text" v-model="serviceTypeRecord.serviceTypePrice" />
                   <span class="p-inputgroup-addon"><small>RSD</small></span>
                 </div>
                 <label for="username">Trajanje</label>
                 <div class="p-inputgroup">
-                  <InputNumber type="text" v-model="editServiceTypeObject.serviceTypeDuration" />
+                  <InputNumber type="text" v-model="serviceTypeRecord.serviceTypeDuration" />
                   <span class="p-inputgroup-addon">min</span>
                 </div>
               </div>
@@ -104,43 +146,43 @@ const onSaveServiceTypeClick = async () => {
                     <tr>
                       <td>Ponedeljak</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnMonday" />
+                        <InputSwitch v-model="serviceTypeRecord.isAvailableOnMonday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Utorak</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnTuesday" />
+                        <InputSwitch v-model="serviceTypeRecord.isAvailableOnTuesday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Sreda</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnWednesday" />
+                        <InputSwitch v-model="serviceTypeRecord.isAvailableOnWednesday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Četvrtak</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnThursday" />
+                        <InputSwitch v-model="serviceTypeRecord.isAvailableOnThursday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Petak</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnFriday" />
+                        <InputSwitch v-model="serviceTypeRecord.isAvailableOnFriday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Subota</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnSaturday" />
+                        <InputSwitch v-model="serviceTypeRecord.isAvailableOnSaturday" />
                       </td>
                     </tr>
                     <tr>
                       <td>Nedelja</td>
                       <td class="text-right">
-                        <InputSwitch v-model="editServiceTypeObject.isAvailableOnSunday" />
+                        <InputSwitch v-model="serviceTypeRecord.isAvailableOnSunday" />
                       </td>
                     </tr>
                   </table>
@@ -152,7 +194,7 @@ const onSaveServiceTypeClick = async () => {
                 icon="pi pi-save"
                 label="Sačuvaj"
                 class="!m-0"
-                :loading="putServiceType.isLoading"
+                :loading="postServiceType.isLoading || putServiceType.isLoading"
                 @click="onSaveServiceTypeClick"
               >
               </Button>
@@ -172,6 +214,10 @@ const onSaveServiceTypeClick = async () => {
 </template>
 
 <style scoped>
+:deep(.p-panel-header) {
+  @apply px-[1.25em] py-[0.75em]
+}
+
 :deep(.p-panel-content) {
   @apply p-0;
 }
