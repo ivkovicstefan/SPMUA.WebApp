@@ -16,7 +16,7 @@ import { ServiceType } from '@/types/entities/ServiceType'
 import { DialogMode } from '@/types/Enums'
 
 const serviceTypeStore = useServiceTypeStore()
-const { serviceTypes, postServiceType, putServiceType } = serviceTypeStore
+const { serviceTypes, postServiceType, putServiceType, deleteServiceType } = serviceTypeStore
 
 serviceTypeStore.getServiceTypes()
 
@@ -49,11 +49,17 @@ const tableItemsMenuItems = ref([
       command: () => {
         onEditServiceTypeRowClick()
       }
+  },
+  {
+      label: 'Obriši',
+      icon: 'pi pi-times',
+      command: () => {
+        onDeleteServiceTypeRowClick(serviceTypeRecord.value.serviceTypeId)
+      }
   }
 ]);
 
 const onRowMenuClick = (e: any, selectedServiceType: ServiceType) => {
-  console.log(selectedServiceType)
   serviceTypeRecord.value = selectedServiceType
   tableItemsMenu.value.toggle(e);
 };
@@ -63,7 +69,7 @@ const onEditServiceTypeRowClick = (): void => {
   isServiceTypeDetailDialogVisible.value = true
 }
 
-const onSaveServiceTypeClick = async () => {
+const onSaveServiceTypeClick = async (): Promise<void> => {
   if (serviceTypeDialogMode.value == DialogMode.Add) {
     await serviceTypeStore.createServiceType(serviceTypeRecord.value)
     serviceTypeStore.getServiceTypes()
@@ -75,6 +81,11 @@ const onSaveServiceTypeClick = async () => {
   }
 
   isServiceTypeDetailDialogVisible.value = false
+}
+
+const onDeleteServiceTypeRowClick = async(serviceTypeId: number): Promise<void> => {
+  await serviceTypeStore.removeServiceType(serviceTypeId)
+  await serviceTypeStore.getServiceTypes()
 }
 </script>
 
@@ -100,7 +111,7 @@ const onSaveServiceTypeClick = async () => {
           >
           </Button>
         </template>
-        <div class="flex flex-col" v-if="serviceTypes.isFinished">
+        <div class="flex flex-col" v-if="serviceTypes.isFinished && !deleteServiceType.isLoading">
           <DataTable
             v-if="serviceTypes.data.length > 0"
             :value="serviceTypes.data"
@@ -221,7 +232,7 @@ const onSaveServiceTypeClick = async () => {
             </template>
           </Dialog>
         </div>
-        <div class="flex items-center min-h-[300px]" v-if="serviceTypes.isLoading">
+        <div class="flex items-center min-h-[300px]" v-if="serviceTypes.isLoading || deleteServiceType.isLoading">
           <ProgressSpinner
             style="height: 50px; width: 50px"
             strokeWidth="4"

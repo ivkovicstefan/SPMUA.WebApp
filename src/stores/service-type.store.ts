@@ -7,7 +7,8 @@ export const useServiceTypeStore = defineStore('service-types', {
     return {
       serviceTypes: useApi('/api/service-type/service-types') as ApiWrapper,
       postServiceType: useApi('/api/service-type/service-type') as ApiWrapper,
-      putServiceType: useApi('/api/service-type/service-type') as ApiWrapper
+      putServiceType: useApi('/api/service-type/service-type') as ApiWrapper,
+      deleteServiceType: useApi('/api/service-type/service-type/:id') as ApiWrapper
     }
   },
   actions: {
@@ -30,6 +31,16 @@ export const useServiceTypeStore = defineStore('service-types', {
         serviceTypeObject,
         {
           method: 'PUT'
+        },
+        true
+      )
+    },
+    async removeServiceType(serviceTypeId: number): Promise<void> {
+      await this.deleteServiceType.execute(
+        '/api/service-type/service-type/' + serviceTypeId,
+        undefined,
+        {
+          method: 'DELETE'
         },
         true
       )
