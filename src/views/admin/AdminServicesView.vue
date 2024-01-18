@@ -10,6 +10,7 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
+import Menu from 'primevue/menu'
 import { useServiceTypeStore } from '@/stores/service-type.store'
 import { ServiceType } from '@/types/entities/ServiceType'
 import { DialogMode } from '@/types/Enums'
@@ -40,13 +41,25 @@ const onNewServiceTypeClick = () => {
   isServiceTypeDetailDialogVisible.value = true
 }
 
-const onEditServiceTypeRowClick = (serviceTypeId: number): void => {
-  serviceTypeRecord.value = serviceTypes.data.find(
-    (st: any) => st.serviceTypeId == serviceTypeId
-  )
+const tableItemsMenu = ref();
+const tableItemsMenuItems = ref([
+  {
+      label: 'Izmeni',
+      icon: 'pi pi-pencil',
+      command: () => {
+        onEditServiceTypeRowClick()
+      }
+  }
+]);
 
+const onRowMenuClick = (e: any, selectedServiceType: ServiceType) => {
+  console.log(selectedServiceType)
+  serviceTypeRecord.value = selectedServiceType
+  tableItemsMenu.value.toggle(e);
+};
+
+const onEditServiceTypeRowClick = (): void => {
   serviceTypeDialogMode.value = DialogMode.Edit
-
   isServiceTypeDetailDialogVisible.value = true
 }
 
@@ -111,10 +124,17 @@ const onSaveServiceTypeClick = async () => {
               <template #body="slotProps">
                 <Button
                   class="!bg-transparent !p-0 !h-[32px] !w-[32px] !text-gray-400 !border-none hover:!bg-gray-100 hover:!text-black focus:!shadow-none"
-                  icon="pi pi-pencil"
+                  icon="pi pi-ellipsis-v"
                   rounded
-                  @click="onEditServiceTypeRowClick(slotProps.data.serviceTypeId)"
+                  @click="onRowMenuClick($event, slotProps.data)"
                 ></Button>
+                <Menu
+                  id="overlay_menu"
+                  ref="tableItemsMenu"
+                  :model="tableItemsMenuItems"
+                  popup  
+                >
+                </Menu>
               </template>
             </Column>
           </DataTable>
