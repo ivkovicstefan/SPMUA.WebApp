@@ -10,12 +10,13 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import InputSwitch from 'primevue/inputswitch'
+import Menu from 'primevue/menu'
 import { useServiceTypeStore } from '@/stores/service-type.store'
 import { ServiceType } from '@/types/entities/ServiceType'
 import { DialogMode } from '@/types/Enums'
 
 const serviceTypeStore = useServiceTypeStore()
-const { serviceTypes, postServiceType, putServiceType } = serviceTypeStore
+const { serviceTypes, postServiceType, putServiceType, deleteServiceType } = serviceTypeStore
 
 serviceTypeStore.getServiceTypes()
 
@@ -40,17 +41,35 @@ const onNewServiceTypeClick = () => {
   isServiceTypeDetailDialogVisible.value = true
 }
 
-const onEditServiceTypeRowClick = (serviceTypeId: number): void => {
-  serviceTypeRecord.value = serviceTypes.data.find(
-    (st: any) => st.serviceTypeId == serviceTypeId
-  )
+const tableItemsMenu = ref();
+const tableItemsMenuItems = ref([
+  {
+      label: 'Izmeni',
+      icon: 'pi pi-pencil',
+      command: () => {
+        onEditServiceTypeRowClick()
+      }
+  },
+  {
+      label: 'Obriši',
+      icon: 'pi pi-times',
+      command: () => {
+        onDeleteServiceTypeRowClick(serviceTypeRecord.value.serviceTypeId)
+      }
+  }
+]);
 
+const onRowMenuClick = (e: any, selectedServiceType: ServiceType) => {
+  serviceTypeRecord.value = selectedServiceType
+  tableItemsMenu.value.toggle(e);
+};
+
+const onEditServiceTypeRowClick = (): void => {
   serviceTypeDialogMode.value = DialogMode.Edit
-
   isServiceTypeDetailDialogVisible.value = true
 }
 
-const onSaveServiceTypeClick = async () => {
+const onSaveServiceTypeClick = async (): Promise<void> => {
   if (serviceTypeDialogMode.value == DialogMode.Add) {
     await serviceTypeStore.createServiceType(serviceTypeRecord.value)
     serviceTypeStore.getServiceTypes()
@@ -62,6 +81,11 @@ const onSaveServiceTypeClick = async () => {
   }
 
   isServiceTypeDetailDialogVisible.value = false
+}
+
+const onDeleteServiceTypeRowClick = async(serviceTypeId: number): Promise<void> => {
+  await serviceTypeStore.removeServiceType(serviceTypeId)
+  await serviceTypeStore.getServiceTypes()
 }
 </script>
 
@@ -87,7 +111,7 @@ const onSaveServiceTypeClick = async () => {
           >
           </Button>
         </template>
-        <div class="flex flex-col" v-if="serviceTypes.isFinished">
+        <div class="flex flex-col" v-if="serviceTypes.isFinished && !deleteServiceType.isLoading">
           <DataTable
             v-if="serviceTypes.data.length > 0"
             :value="serviceTypes.data"
@@ -111,10 +135,17 @@ const onSaveServiceTypeClick = async () => {
               <template #body="slotProps">
                 <Button
                   class="!bg-transparent !p-0 !h-[32px] !w-[32px] !text-gray-400 !border-none hover:!bg-gray-100 hover:!text-black focus:!shadow-none"
-                  icon="pi pi-pencil"
+                  icon="pi pi-ellipsis-v"
                   rounded
-                  @click="onEditServiceTypeRowClick(slotProps.data.serviceTypeId)"
+                  @click="onRowMenuClick($event, slotProps.data)"
                 ></Button>
+                <Menu
+                  id="overlay_menu"
+                  ref="tableItemsMenu"
+                  :model="tableItemsMenuItems"
+                  popup  
+                >
+                </Menu>
               </template>
             </Column>
           </DataTable>
@@ -201,7 +232,7 @@ const onSaveServiceTypeClick = async () => {
             </template>
           </Dialog>
         </div>
-        <div class="flex items-center min-h-[300px]" v-if="serviceTypes.isLoading">
+        <div class="flex items-center min-h-[300px]" v-if="serviceTypes.isLoading || deleteServiceType.isLoading">
           <ProgressSpinner
             style="height: 50px; width: 50px"
             strokeWidth="4"
