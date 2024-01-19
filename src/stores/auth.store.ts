@@ -26,8 +26,8 @@ export const useAuthStore = defineStore('auth', {
         })
 
         response = new Response(true, '', '')
-        //TODO: Replace "Unknown Admin" with actual admin fullname when backend changes the response object
-        const admin = new Admin('Unknown Admin', true, result.data)
+
+        const admin = new Admin(result.data.adminFirstName + ' ' + result.data.adminLastName, true, result.data.token)
         localStorage.setItem('admin', JSON.stringify(admin))
       } catch (error: unknown) {
         if (error instanceof AxiosError) {
