@@ -66,12 +66,12 @@ const onNewReservationClick = () => {
 
 <template>
   <!-- Mobile version -->
-  <div class="flex flex-col h-screen">
-    <div class="px-10 py-6 border-b">
+  <div class="flex flex-col h-screen bg-zinc-50 border-y">
+    <div class="px-10 pt-6 pb-3">
       <!-- App Steps -->
       <AppSteps :steps-count="items.length" :current-step-index="currentStepIndex"> </AppSteps>
 
-      <h1 class="text-4xl font-light mt-4">
+      <h1 class="leading-[1] text-[2.35rem] lg:text-5xl mt-4">
         {{ items[currentStepIndex].stepTitle }}
       </h1>
     </div>
@@ -88,7 +88,7 @@ const onNewReservationClick = () => {
         </div>
       </TransitionGroup>
     </div>
-    <div class="px-10 py-3 border-t">
+    <div class="px-10 py-3 pb-6">
       <!-- Actions -->
       <Button
         v-if="!isReservationLoading && !isReservationFinished"
