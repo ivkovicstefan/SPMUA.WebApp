@@ -307,7 +307,7 @@ const onNewReservationClickHandler = () => {
       </div>
     </div>
     <!-- Gallery Section -->
-    <div class="order-3 lg:order-2 py-6 lg:px-48 bg-white px-10">
+    <div class="order-3 lg:order-2 py-6 lg:px-48 bg-white px-10 ">
       <div class="flex mb-12 items-center">
         <h1 class="leading-[1] text-[2.35rem] lg:text-5xl">Galerija</h1>
         <RouterLink to="/gallery" class="ml-auto">
