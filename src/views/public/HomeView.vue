@@ -267,7 +267,7 @@ const onNewReservationClickHandler = () => {
       />
     </div>
     <!-- Services Section -->
-    <div class="order-2 lg:order-3 px-10 py-6 lg:px-48 flex flex-col bg-white">
+    <div class="order-2 lg:order-3 px-10 py-6 lg:px-48 flex flex-col bg-white lg:hidden">
       <h1 class="leading-[1] text-[2.35rem] lg:text-5xl mb-12">Usluge</h1>
       <TransitionGroup 
         element="div" 
