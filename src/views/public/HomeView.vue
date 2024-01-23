@@ -309,7 +309,7 @@ const onNewReservationClickHandler = () => {
     <!-- Gallery Section -->
     <div class="order-3 lg:order-2 py-6 lg:px-48 bg-white px-10 ">
       <div class="flex mb-12 items-center">
-        <h1 class="leading-[1] text-[2.35rem] lg:text-5xl">Galerija</h1>
+        <h1 class="leading-[1] text-[2.35rem] lg:text-5xl lg:hidden">Galerija</h1>
         <RouterLink to="/gallery" class="ml-auto">
           <Button
             label="Pogledaj sve"
@@ -319,26 +319,27 @@ const onNewReservationClickHandler = () => {
           ></Button>
         </RouterLink>
       </div>
-      <div class="grid grid-cols-3 gap-6">
+      <div class="grid grid-cols-3 gap-6 lg:grid-cols-6 lg:mt-[-14rem]">
         <video
-          class="col-span-2 row-span-2 rounded-xl object-cover aspect-square"
+          class="col-span-2 row-span-2 lg:hidden rounded-xl object-cover aspect-square"
           autoplay
           muted
           loop
         >
           <source src="@/assets/gallery-video.mp4" type="video/mp4" />
         </video>
-        <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-2.jpg" />
-        <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-3.jpg" />
-        <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-4.jpg" />
-        <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-5.jpg" />
-        <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-6.jpg" />
-        <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-7.jpg" />
+        <img class="hidden col-span-3 row-span-3 lg:block rounded-xl object-cover aspect-square lg:row-start-1" src="@/assets/gallery-picture-1.png" />
+        <img class="rounded-xl object-cover aspect-square lg:row-start-2" src="@/assets/gallery-picture-2.jpg" />
+        <img class="rounded-xl object-cover aspect-square lg:hidden" src="@/assets/gallery-picture-3.jpg" />
+        <img class="rounded-xl object-cover aspect-square lg:row-start-2" src="@/assets/gallery-picture-4.jpg" />
+        <img class="rounded-xl object-cover aspect-square lg:row-start-2" src="@/assets/gallery-picture-5.jpg" />
+        <img class="rounded-xl object-cover aspect-square lg:row-start-3" src="@/assets/gallery-picture-6.jpg" />
+        <img class="rounded-xl object-cover aspect-square lg:row-start-3" src="@/assets/gallery-picture-7.jpg" />
         <img
-          class="rounded-xl row-span-2 col-span-2 object-cover aspect-square"
+          class="rounded-xl row-span-2 col-span-2 object-cover aspect-square lg:hidden"
           src="@/assets/gallery-picture-1.png"
         />
-        <img class="rounded-xl object-cover aspect-square" src="@/assets/gallery-picture-8.jpg" />
+        <img class="rounded-xl object-cover aspect-square lg:row-start-3" src="@/assets/gallery-picture-8.jpg" />
       </div>
       <div class="flex mt-6"></div>
     </div>
