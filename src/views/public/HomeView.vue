@@ -251,17 +251,17 @@ const onNewReservationClickHandler = () => {
   <div class="flex flex-col">
     <!-- Hero Section -->
     <div class="h-[calc(100vh-160px)] lg:h-auto flex flex-col lg:flex-row self-center overflow-hidden p-0 lg:px-48">
-      <div class="px-10 py-5 lg:px-0">
+      <div class="flex-1 px-10 py-5 lg:px-0">
         <h1 class="leading-[1] text-[2.35rem] lg:text-5xl font-semibold">
           Neka moje četkice ispričaju tvoju priču.
         </h1>
-        <p class="mt-6 text-zinc-500">
+        <p class="mt-6 text-zinc-500 text-lg">
           Uz svaki potez četkice otkrivam tvoju jedinstvenost i ističem ono što te čini posebnom.
         </p>
         <Button class="mt-6" label="Rezerviši svoj termin" @click="onBookAppointmentClick"></Button>
       </div>
       <img
-        class="w-full h-full object-cover lg:w-auto lg:h-[60vh]"
+        class="w-full h-full object-cover flex-1 lg:w-auto lg:h-[60vh]"
         src="@/assets/heroimage.png"
         alt="Hero Image"
       />
@@ -319,7 +319,7 @@ const onNewReservationClickHandler = () => {
           ></Button>
         </RouterLink>
       </div>
-      <div class="grid grid-cols-3 gap-6 lg:grid-cols-6 lg:mt-[-14rem]">
+      <div class="grid grid-cols-3 gap-6 lg:grid-cols-6 lg:mt-[-14.5rem]">
         <video
           class="col-span-2 row-span-2 lg:hidden rounded-xl object-cover aspect-square"
           autoplay
