@@ -9,6 +9,7 @@ import Button from 'primevue/button'
 import Message from 'primevue/message'
 import Badge from 'primevue/badge'
 import ProgressSpinner from 'primevue/progressspinner'
+import Tooltip from 'primevue/tooltip';
 import { useServiceTypeStore } from '@/stores/service-type.store'
 import { useWorkingHoursStore } from '@/stores/working-hours.store'
 import { useAppointmentStore } from '@/stores/appointment.store'
@@ -18,6 +19,8 @@ import {
   useDefaultDateFormatter,
   useDefaultTimeFormatter
 } from '@/composables/useDateTimeFormatter'
+import { useVuelidate } from '@vuelidate/core'
+import { maxLength, email, required, helpers } from '@vuelidate/validators'
 
 const bookAppointmentSection = ref(null)
 
@@ -97,6 +100,36 @@ const getAvailableAtDays = (item: any): string => {
 const newAppointmentObject = reactive(new Appointment())
 const appointmentTime = ref('')
 const currentStepIndex = ref(0)
+
+const appointmentValidationSchema = {
+  customerFirstName: {
+    maxLength: helpers.withMessage(({
+        $pending,
+        $invalid,
+        $params,
+        $model
+      }) => `Maksimalna dužina je ${$params.max} karaktera.`, maxLength(35)),
+  },
+  customerLastName: {
+    maxLength: helpers.withMessage(({
+        $pending,
+        $invalid,
+        $params,
+        $model
+      }) => `Maksimalna dužina je ${$params.max} karaktera.`, maxLength(35)),
+  },
+  customerEmail: {
+    maxLength: helpers.withMessage(({
+        $pending,
+        $invalid,
+        $params,
+        $model
+      }) => `Maksimalna dužina je ${$params.max} karaktera.`, maxLength(100)),
+    email: helpers.withMessage('Email adresa nije validna.', email)
+  }
+}
+
+const v$ = useVuelidate(appointmentValidationSchema, newAppointmentObject)
 
 const serviceTypeStore = useServiceTypeStore()
 const { serviceTypes } = serviceTypeStore
@@ -206,6 +239,7 @@ const computedAppointmentService = computed(() => {
 })
 
 const computedIsStepWizardNextButtonDisabled = computed(() => {
+  console.log(v$.value)
   if (currentStepIndex.value == 0) {
     return false
   }
@@ -227,7 +261,7 @@ const computedIsStepWizardNextButtonDisabled = computed(() => {
     case 2:
       return (newAppointmentObject.customerFirstName.trim().length > 0 &&
               newAppointmentObject.customerLastName.trim().length > 0 &&
-              newAppointmentObject.customerPhone.trim().length > 0) ? false : true
+              newAppointmentObject.customerPhone.trim().length > 0) && v$.value.$errors.length == 0 ? false : true
   }
 
   return false
@@ -447,41 +481,63 @@ const onNewReservationClickHandler = () => {
                 Ime
               </label>
               <span class="p-input-icon-right">
-                  <i v-show="newAppointmentObject.customerFirstName.trim().length > 0" class="pi pi-check !text-green-500 font-bold" />
+                  <i v-show="newAppointmentObject.customerFirstName.trim().length > 0 && !(v$.customerFirstName.$errors.length > 0)" class="pi pi-check !text-green-500 font-bold" />
                     <InputText
                       class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                      :class="{ '!border-red-600': v$.customerFirstName.$errors.length > 0 }"
                       v-model="newAppointmentObject.customerFirstName"
                       placeholder="Ime"
+                      @blur="v$.customerFirstName.$touch()"
                     ></InputText>
               </span>
+              <p v-if="v$.customerFirstName.$errors.length > 0"
+                class="text-sm text-red-600">
+                {{ v$.customerFirstName.$errors[0].$message }}
+              </p>
             </div>
             <div class="flex flex-col gap-2">
               <label>
                 Prezime
               </label>
               <span class="p-input-icon-right">
-                  <i v-show="newAppointmentObject.customerLastName.trim().length > 0" class="pi pi-check !text-green-500 font-bold" />
-                  <InputText
-                    class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
-                    v-model="newAppointmentObject.customerLastName"
-                    placeholder="Prezime"
-                  ></InputText>
+                  <i v-show="newAppointmentObject.customerLastName.trim().length > 0 && !(v$.customerLastName.$errors.length > 0)" class="pi pi-check !text-green-500 font-bold" />
+                    <InputText
+                      class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                      :class="{ '!border-red-600': v$.customerLastName.$errors.length > 0 }"
+                      v-model="newAppointmentObject.customerLastName"
+                      placeholder="Prezime"
+                      @blur="v$.customerLastName.$touch()"
+                    ></InputText>
               </span>
+              <p v-if="v$.customerLastName.$errors.length > 0"
+                class="text-sm text-red-600">
+                {{ v$.customerLastName.$errors[0].$message }}
+              </p>
             </div>
             <div class="flex flex-col gap-2">
               <label>
                 Email adresa <span class="text-zinc-400 text-sm">(nije obavezno)</span>
               </label>
               <span class="p-input-icon-right">
-                <i v-show="newAppointmentObject.customerEmail.trim().length > 0" class="pi pi-bell !text-green-500 font-bold" />
+                <i v-show="newAppointmentObject.customerEmail.trim().length > 0 && !(v$.customerEmail.$errors.length > 0)" class="pi pi-bell !text-green-500 font-bold" />
                 <InputText
                   type="email"
                   class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                  :class="{ '!border-red-600': v$.customerEmail.$errors.length > 0 }"
                   v-model="newAppointmentObject.customerEmail"
                   placeholder="Email adresa"
+                  @blur="v$.customerEmail.$touch()"
                 ></InputText>
               </span>
-              <label class="text-sm text-zinc-400">Ostavi svoj email i budi u toku - dobijaj automatska obaveštenja o promenama statusa tvoje rezervacije.</label>
+              <p v-if="v$.customerEmail.$errors.length > 0"
+                class="text-sm text-red-600">
+                {{ v$.customerEmail.$errors[0].$message }}
+              </p>
+              <label 
+                class="text-sm text-zinc-400"
+              >
+                Ostavi svoj email i budi u toku - dobijaj automatska obaveštenja o promenama statusa tvoje rezervacije.
+              </label>
             </div>
             <div class="flex flex-col gap-2">
               <label>
