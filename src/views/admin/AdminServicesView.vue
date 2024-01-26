@@ -14,6 +14,8 @@ import Menu from 'primevue/menu'
 import { useServiceTypeStore } from '@/stores/service-type.store'
 import { ServiceType } from '@/types/entities/ServiceType'
 import { DialogMode } from '@/types/Enums'
+import { required, maxLength, helpers } from '@vuelidate/validators'
+import { useVuelidate } from '@vuelidate/core'
 
 const serviceTypeStore = useServiceTypeStore()
 const { serviceTypes, postServiceType, putServiceType, deleteServiceType } = serviceTypeStore
@@ -21,6 +23,26 @@ const { serviceTypes, postServiceType, putServiceType, deleteServiceType } = ser
 serviceTypeStore.getServiceTypes()
 
 const serviceTypeRecord: Ref<any> = ref(new ServiceType())
+const serviceTypeValidationSchema = {
+  serviceTypeName: {
+    maxLength: helpers.withMessage(({
+      $pending,
+      $invalid,
+      $params,
+      $model
+    }) => `Maksimalna dužina je ${$params.max} karaktera.`, maxLength(50)),
+    required: helpers.withMessage('Polje je obavezno.', required)
+  },
+  serviceTypePrice: {
+    required: helpers.withMessage('Polje je obavezno.', required)
+  },
+  serviceTypeDuration: {
+    required: helpers.withMessage('Polje je obavezno.', required)
+  }
+}
+
+const v$ = useVuelidate(serviceTypeValidationSchema, serviceTypeRecord)
+
 const isServiceTypeDetailDialogVisible: Ref<boolean> = ref(false)
 const serviceTypeDialogMode = ref(0)
 
@@ -70,17 +92,22 @@ const onEditServiceTypeRowClick = (): void => {
 }
 
 const onSaveServiceTypeClick = async (): Promise<void> => {
-  if (serviceTypeDialogMode.value == DialogMode.Add) {
-    await serviceTypeStore.createServiceType(serviceTypeRecord.value)
-    serviceTypeStore.getServiceTypes()
-  }
-  else if (serviceTypeDialogMode.value == DialogMode.Edit) {
-    await serviceTypeStore.updateServiceType(serviceTypeRecord.value)
-    serviceTypeStore.getServiceTypes()
+  await v$.value.$validate()
+  v$.value.$touch()
+  console.log(v$.value)
+  if (!v$.value.$invalid) {
+    if (serviceTypeDialogMode.value == DialogMode.Add) {
+      await serviceTypeStore.createServiceType(serviceTypeRecord.value)
+      serviceTypeStore.getServiceTypes()
+    }
+    else if (serviceTypeDialogMode.value == DialogMode.Edit) {
+      await serviceTypeStore.updateServiceType(serviceTypeRecord.value)
+      serviceTypeStore.getServiceTypes()
 
-  }
+    }
 
-  isServiceTypeDetailDialogVisible.value = false
+    isServiceTypeDetailDialogVisible.value = false
+  }
 }
 
 const onDeleteServiceTypeRowClick = async(serviceTypeId: number): Promise<void> => {
@@ -157,18 +184,50 @@ const onDeleteServiceTypeRowClick = async(serviceTypeId: number): Promise<void> 
           >
             <div class="grid grid-cols-2 gap-6">
               <div class="col-span-2 lg:col-span-1 flex flex-col gap-2">
-                <label for="username">Naziv usluge</label>
-                <InputText type="text" v-model="serviceTypeRecord.serviceTypeName" />
+                <label for="username">
+                  Naziv usluge
+                </label>
+                <InputText 
+                  type="text" 
+                  :class="{'!border-red-600': v$.serviceTypeName.$errors.length > 0}"
+                  v-model="serviceTypeRecord.serviceTypeName" 
+                />
+                <span 
+                  v-if="v$.serviceTypeName.$errors.length > 0"
+                  class="text-red-600 text-sm"  
+                >
+                  {{ v$.serviceTypeName.$errors[0].$message }}
+                </span>
                 <label for="username">Cena</label>
                 <div class="p-inputgroup">
-                  <InputNumber type="text" v-model="serviceTypeRecord.serviceTypePrice" />
+                  <InputNumber 
+                    type="text" 
+                    v-model="serviceTypeRecord.serviceTypePrice"
+                    :class="{'!border-red-600': v$.serviceTypePrice.$errors.length > 0}"
+                  />
                   <span class="p-inputgroup-addon"><small>RSD</small></span>
                 </div>
+                <span 
+                  v-if="v$.serviceTypePrice.$errors.length > 0"
+                  class="text-red-600 text-sm"  
+                >
+                  {{ v$.serviceTypePrice.$errors[0].$message }}
+                </span>
                 <label for="username">Trajanje</label>
                 <div class="p-inputgroup">
-                  <InputNumber type="text" v-model="serviceTypeRecord.serviceTypeDuration" />
+                  <InputNumber 
+                    type="text" 
+                    v-model="serviceTypeRecord.serviceTypeDuration" 
+                    :class="{'!border-red-600': v$.serviceTypeDuration.$errors.length > 0}"
+                  />
                   <span class="p-inputgroup-addon">min</span>
                 </div>
+                <span 
+                  v-if="v$.serviceTypeDuration.$errors.length > 0"
+                  class="text-red-600 text-sm"  
+                >
+                  {{ v$.serviceTypeDuration.$errors[0].$message }}
+                </span>
               </div>
               <div class="col-span-2 lg:col-span-1 flex flex-col gap-2">
                 <h1 class="font-semibold">Dostupnost po danima</h1>
