@@ -1,27 +1,19 @@
 # SPMUA.WebApp
 
-This template should help get you started developing with Vue 3 in Vite.
+A web application developed using Vue3 + Vite, Tailwind that represents the frotnend part of my thesis project.
 
-## Recommended IDE Setup
+## Project Overview
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+This web application is designed to showcase the makeup artist's portfolio, provide information about offered services, and allow clients to make bookings. The admin panel facilitates easy management of appointments, services, and other aspects of the business.
 
-## Type Support for `.vue` Imports in TS
+## Project Features
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- **Client Website:** A user-friendly website showcasing the makeup artist's work, services, appointment booking wizard and contact information.
+- **Admin Panel:** An intuitive admin interface for efficient management of bookings, services, and other administrative tasks.
 
 ## Project Setup
+
+To set up the project locally, follow these steps:
 
 ```sh
 npm install
@@ -44,3 +36,15 @@ npm run build
 ```sh
 npm run lint
 ```
+
+## Technologies Used
+- **Vue 3:** The progressive JavaScript framework used for building the user interface,
+- **Tailwind CSS**: A utility-first CSS framework for building modern designs.
+
+## Contribution Guidelines
+
+I appreciate your interest in contributing, but this repository is made for my thesis assignment and contribution is not allowed.
+
+## License
+
+This project is licensed under the MIT License. Feel free to use, modify, and distribute the code according to the terms of the license.
