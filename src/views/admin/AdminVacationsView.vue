@@ -15,6 +15,8 @@ import { useVacationStore } from '@/stores/vacation.store'
 import { useDefaultDateFormatter, getTomorowDate } from '@/composables/useDateTimeFormatter'
 import { DialogMode } from '@/types/Enums'
 import { Vacation } from '@/types/entities/Vacation'
+import { required, maxLength, helpers } from '@vuelidate/validators'
+import { useVuelidate } from '@vuelidate/core'
 
 const vacationStore = useVacationStore()
 const { vacations, postVacation, putVacation, deleteVacation } = vacationStore
@@ -22,6 +24,24 @@ const { vacations, postVacation, putVacation, deleteVacation } = vacationStore
 vacationStore.getVacations()
 
 const vacationRecord = ref(new Vacation())
+const vacationValidationSchema = {
+  vacationName: {
+    maxLength: helpers.withMessage(({
+      $pending,
+      $invalid,
+      $params,
+      $model
+    }) => `Maksimalna dužina je ${$params.max} karaktera.`, maxLength(50)),
+    required: helpers.withMessage('Polje je obavezno.', required)
+  },
+  startDate: {
+    required: helpers.withMessage('Polje je obavezno.', required)
+  },
+  endDate: {
+    required: helpers.withMessage('Polje je obavezno.', required)
+  }
+}
+const v$ = useVuelidate(vacationValidationSchema, vacationRecord)
 const vacationDates = ref()
 
 watch(vacationDates, (newValue) => {
@@ -54,7 +74,7 @@ const tableItemsMenuItems = ref([
 ]);
 
 const onRowMenuClick = (e: any, selectedVacation: Vacation) => {
-  vacationRecord.value = selectedVacation
+  vacationRecord.value = JSON.parse(JSON.stringify(selectedVacation))
   tableItemsMenu.value.toggle(e);
 };
 
@@ -80,16 +100,21 @@ const onNewVacationClick = (): void => {
 }
 
 const onSaveVacationClick = async (): Promise<void> => {
-  if (vacationDialogMode.value == DialogMode.Add) {
-    await vacationStore.createVacation(vacationRecord.value)
-    await vacationStore.getVacations()
-  }
-  else if (vacationDialogMode.value == DialogMode.Edit) {
-    await vacationStore.updateVacation(vacationRecord.value)
-    await vacationStore.getVacations()
-  }
+  await v$.value.$validate()
+  v$.value.$touch()
 
-  isVacationDetailDialogVisible.value = false
+  if (!v$.value.$invalid) {
+    if (vacationDialogMode.value == DialogMode.Add) {
+      await vacationStore.createVacation(vacationRecord.value)
+      await vacationStore.getVacations()
+    }
+    else if (vacationDialogMode.value == DialogMode.Edit) {
+      await vacationStore.updateVacation(vacationRecord.value)
+      await vacationStore.getVacations()
+    }
+
+    isVacationDetailDialogVisible.value = false
+  }
 }
 
 const onEditVacationRowClick = (): void => {
@@ -191,10 +216,22 @@ const onDeleteVacationRowClick = async (e: number): Promise<void> => {
             :header="computedVacationDetailDialogHeader"
             class="w-[100%] lg:w-auto"
             modal
+            @after-hide="v$.$reset()"
           >
             <div class="flex flex-col gap-2">
               <label for="txtVacationName">Naziv odmora</label>
-              <InputText id="txtVacationName" type="text" v-model="vacationRecord.vacationName" />
+              <InputText 
+                id="txtVacationName" 
+                type="text"
+                :class="{'!border-red-600': v$.vacationName.$errors.length > 0}"
+                v-model="vacationRecord.vacationName" 
+              />
+              <span 
+                v-if="v$.vacationName.$errors.length > 0"
+                class="text-red-600 text-sm"  
+              >
+                {{ v$.vacationName.$errors[0].$message }}
+              </span>
               <label>Dani</label>
               <Calendar
                 inline
@@ -204,6 +241,12 @@ const onDeleteVacationRowClick = async (e: number): Promise<void> => {
                 :min-date="getTomorowDate()"
               >
               </Calendar>
+              <span 
+                v-if="v$.startDate.$errors.length > 0 || v$.endDate.$errors.length > 0"
+                class="text-red-600 text-sm"  
+              >
+                {{ v$.startDate.$errors[0].$message ?? v$.endDate.$errors[0].$message }}
+              </span>
             </div>
             <template #footer>
               <Button 
