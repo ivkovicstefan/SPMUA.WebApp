@@ -74,7 +74,7 @@ const tableItemsMenuItems = ref([
 ]);
 
 const onRowMenuClick = (e: any, selectedVacation: Vacation) => {
-  vacationRecord.value = selectedVacation
+  vacationRecord.value = JSON.parse(JSON.stringify(selectedVacation))
   tableItemsMenu.value.toggle(e);
 };
 
