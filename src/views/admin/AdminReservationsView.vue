@@ -23,6 +23,7 @@ const { appointments, patchAppointmentStatus } = appointmentStore
 
 const pendingAppointmentsExpandedRows = ref([])
 const confirmedAppointmentsExpandedRows = ref([])
+const rejectedAppointmentsExpandedRows = ref([])
 
 const computedPendingAppointments = computed(() => {
   return appointments.data.filter((a) => a.appointmentStatusId == 1)
@@ -30,6 +31,10 @@ const computedPendingAppointments = computed(() => {
 
 const computedConfirmedAppointments = computed(() => {
   return appointments.data.filter((a) => a.appointmentStatusId == 2)
+})
+
+const rejectedConfirmedAppointments = computed(() => {
+  return appointments.data.filter((a) => a.appointmentStatusId == 3)
 })
 
 appointmentStore.getAppointments()
@@ -343,6 +348,94 @@ const onReservationResponseConfirm = async (): Promise<void> => {
             severity="info"
           >
             Trenutno nema rezervacija na čekanju.
+          </InlineMessage>
+        </div>
+        <div class="flex items-center min-h-[300px]" v-if="appointments.isLoading">
+          <ProgressSpinner
+            style="height: 50px; width: 50px"
+            strokeWidth="4"
+            animationDuration=".5s"
+          />
+        </div>
+      </Panel>
+    </div>
+    <div class="col-span-4 lg:col-span-2">
+      <Panel>
+        <template #header>
+          <div class="flex">
+            <h1 class="font-semibold">Odbijene rezervacije</h1>
+            <Badge
+              v-if="appointments.isFinished"
+              :value="rejectedConfirmedAppointments.length"
+              class="ml-1"
+            ></Badge>
+          </div>
+        </template>
+        <div class="flex flex-col" v-if="appointments.isFinished">
+          <DataTable
+            v-if="rejectedConfirmedAppointments.length > 0"
+            :value="rejectedConfirmedAppointments"
+            class="p-datatable-sm headerless"
+            v-model:expanded-rows="rejectedAppointmentsExpandedRows"
+            dataKey="appointmentId"
+            striped-rows
+            paginator
+            :rows="5"
+          >
+            <Column expander />
+            <template #expansion="slotProps">
+              <div class="p-3">
+                <table>
+                  <tr>
+                    <th>Broj rezervacije:</th>
+                    <td class="pl-3">{{ slotProps.data.appointmentId }}</td>
+                  </tr>
+                  <tr>
+                    <th>Datum:</th>
+                    <td class="pl-3">
+                      {{ useDefaultDateFormatter(slotProps.data.appointmentDate) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Vreme:</th>
+                    <td class="pl-3">
+                      {{ useDefaultTimeFormatter(slotProps.data.appointmentDate) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Email adresa:</th>
+                    <td class="pl-3">{{ slotProps.data.customerEmail }}</td>
+                  </tr>
+                  <tr>
+                    <th>Broj telefona:</th>
+                    <td class="pl-3">
+                      <a :href="'tel:' + slotProps.data.customerPhone">{{
+                        slotProps.data.customerPhone
+                      }}</a>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </template>
+            <Column>
+              <template #body="slotProps">
+                {{ slotProps.data.customerFirstName + ' ' + slotProps.data.customerLastName }}
+              </template>
+            </Column>
+            <Column field="serviceTypeName" header="Usluga"></Column>
+            <Column>
+              <template #body="slotProps">
+                <div class="flex items-center">
+                </div>
+              </template>
+            </Column>
+          </DataTable>
+          <InlineMessage
+            v-if="rejectedConfirmedAppointments.length == 0"
+            class="!m-6"
+            severity="info"
+          >
+            Trenutno nema odbijenih rezervacija.
           </InlineMessage>
         </div>
         <div class="flex items-center min-h-[300px]" v-if="appointments.isLoading">
