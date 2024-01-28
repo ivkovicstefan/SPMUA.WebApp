@@ -297,51 +297,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
               </template>
             </Column>
             <Column field="serviceTypeName" header="Usluga"></Column>
-            <Column>
-              <template #body="slotProps">
-                <div class="flex items-center">
-                </div>
-              </template>
-            </Column>
           </DataTable>
-          <Dialog
-            v-model:visible="isConfirmOrRejectAppointmentModalVisible"
-            modal
-            :header="confirmOrRejectAppointmentModalHeader"
-          >
-            <div class="flex flex-col">
-              <label for="txtComment" class="font-medium mb-2">Komentar</label>
-              <Textarea
-                v-model.value="reservationResponseObject.responseComment"
-                id="txtComment"
-                rows="5"
-                cols="30"
-                v-tooltip="
-                  'Komentar će biti poslat klijentu u okviru automatskog email-a nakon odobravanja ili odbijanja rezervacije.'
-                "
-              ></Textarea>
-            </div>
-            <template #footer>
-              <Button
-                v-if="confirmOrRejectAppointmentModalMode == AppointmentStatusChangeAction.Reject"
-                severity="danger"
-                class="!w-full"
-                label="Potvrdi"
-                @click="onReservationResponseConfirm"
-                :loading="patchAppointmentStatus.isLoading"
-              >
-              </Button>
-              <Button
-                v-if="confirmOrRejectAppointmentModalMode == AppointmentStatusChangeAction.Approve"
-                severity="success"
-                class="!w-full"
-                label="Potvrdi"
-                @click="onReservationResponseConfirm"
-                :loading="patchAppointmentStatus.isLoading"
-              >
-              </Button>
-            </template>
-          </Dialog>
           <InlineMessage
             v-if="computedConfirmedAppointments.length == 0"
             class="!m-6"
@@ -423,12 +379,6 @@ const onReservationResponseConfirm = async (): Promise<void> => {
               </template>
             </Column>
             <Column field="serviceTypeName" header="Usluga"></Column>
-            <Column>
-              <template #body="slotProps">
-                <div class="flex items-center">
-                </div>
-              </template>
-            </Column>
           </DataTable>
           <InlineMessage
             v-if="rejectedConfirmedAppointments.length == 0"
