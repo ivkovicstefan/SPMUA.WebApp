@@ -102,7 +102,7 @@ const onNewVacationClick = (): void => {
 const onSaveVacationClick = async (): Promise<void> => {
   await v$.value.$validate()
   v$.value.$touch()
-  console.log(v$.value)
+
   if (!v$.value.$invalid) {
     if (vacationDialogMode.value == DialogMode.Add) {
       await vacationStore.createVacation(vacationRecord.value)
@@ -216,6 +216,7 @@ const onDeleteVacationRowClick = async (e: number): Promise<void> => {
             :header="computedVacationDetailDialogHeader"
             class="w-[100%] lg:w-auto"
             modal
+            @after-hide="v$.$reset()"
           >
             <div class="flex flex-col gap-2">
               <label for="txtVacationName">Naziv odmora</label>
