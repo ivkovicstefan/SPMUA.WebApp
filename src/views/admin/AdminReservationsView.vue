@@ -91,7 +91,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
             <Badge
               v-if="appointments.isFinished"
               :value="computedPendingAppointments.length"
-              class="ml-1"
+              class="ml-1 !bg-gold-100 !text-gold-600"
             ></Badge>
           </div>
         </template>
@@ -241,7 +241,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
             <Badge
               v-if="appointments.isFinished"
               :value="computedConfirmedAppointments.length"
-              class="ml-1"
+              class="ml-1 !bg-green-100 !text-green-600"
             ></Badge>
           </div>
         </template>
@@ -323,7 +323,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
             <Badge
               v-if="appointments.isFinished"
               :value="rejectedConfirmedAppointments.length"
-              class="ml-1"
+              class="ml-1 !bg-red-100 !text-red-600"
             ></Badge>
           </div>
         </template>
