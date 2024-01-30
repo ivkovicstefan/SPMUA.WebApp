@@ -83,7 +83,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
   <h1 class="text-2xl text-black font-light mb-6">Rezervacije</h1>
 
   <div class="grid grid-cols-4 gap-6">
-    <div class="col-span-4 lg:col-span-3">
+    <div class="col-span-4 lg:col-span-4">
       <Panel>
         <template #header>
           <div class="flex">
