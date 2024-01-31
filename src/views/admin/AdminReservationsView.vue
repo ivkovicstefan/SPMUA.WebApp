@@ -20,6 +20,33 @@ import {
 } from '@/composables/useDateTimeFormatter'
 import { Appointment } from '@/types/entities/Appointment'
 
+const windowWidthSize: Ref<String> = ref('')
+
+const onWindowResize = (): void => {
+  if (window.innerWidth < 640) {
+    windowWidthSize.value = 'sm'
+  }
+  else if (window.innerWidth < 768) {
+    windowWidthSize.value = 'md'
+  }
+  else if (window.innerWidth < 1024) {
+    windowWidthSize.value = 'lg'
+  }
+  else if (window.innerWidth < 1280) {
+    windowWidthSize.value = 'xl'
+  }
+  else {
+    windowWidthSize.value = '2xl'
+  }
+}
+
+const onWindowLoad = (): void => {
+  onWindowResize()
+}
+
+window.addEventListener('load', onWindowLoad)
+window.addEventListener('resize', onWindowResize)
+
 const appointmentStore = useAppointmentStore()
 const { appointments, patchAppointmentStatus } = appointmentStore
 
@@ -256,7 +283,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
       </Panel>
     </div>
     <div class="col-span-4 lg:col-span-2">
-      <Panel>
+      <Panel toggleable :collapsed="windowWidthSize == 'sm'">
         <template #header>
           <div class="flex">
             <h1 class="font-semibold">Potvrđene rezervacije</h1>
@@ -338,7 +365,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
       </Panel>
     </div>
     <div class="col-span-4 lg:col-span-2">
-      <Panel>
+      <Panel toggleable :collapsed="windowWidthSize == 'sm'">
         <template #header>
           <div class="flex">
             <h1 class="font-semibold">Odbijene rezervacije</h1>
@@ -420,6 +447,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
       </Panel>
     </div>
   </div>
+  {{ computedScreenSize }}
 </template>
 
 <style scoped>
