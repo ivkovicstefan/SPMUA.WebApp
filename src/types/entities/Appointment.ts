@@ -1,4 +1,5 @@
 export class Appointment {
+  appointmentId: number = 0
   serviceTypeId: number = 1
   appointmentDate: Date | null = null
   customerFirstName: string = ''
@@ -7,6 +8,7 @@ export class Appointment {
   customerEmail: string = ''
 
   reset() {
+    this.appointmentId = 0
     this.serviceTypeId = 1
     this.appointmentDate = null
     this.customerFirstName = ''

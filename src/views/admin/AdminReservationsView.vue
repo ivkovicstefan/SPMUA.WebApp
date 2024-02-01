@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { type Ref, ref, computed, reactive } from 'vue'
 import Badge from 'primevue/badge'
 import Button from 'primevue/button'
 import Panel from 'primevue/panel'
@@ -9,6 +9,7 @@ import InlineMessage from 'primevue/inlinemessage'
 import ProgressSpinner from 'primevue/progressspinner'
 import Dialog from 'primevue/dialog'
 import Textarea from 'primevue/textarea'
+import Menu from 'primevue/menu'
 import { ReservationResponse } from '@/types/entities/ReservationResponse'
 import { AppointmentStatusChangeAction } from '@/types/Enums'
 import { useAppointmentStore } from '@/stores/appointment.store'
@@ -17,6 +18,38 @@ import {
   useDefaultTimeFormatter,
   useDateTimeAgoFormatter
 } from '@/composables/useDateTimeFormatter'
+import { Appointment } from '@/types/entities/Appointment'
+
+const windowWidthSize: Ref<String> = ref('')
+
+const onWindowResize = (): void => {
+  if (window.innerWidth < 640) {
+    windowWidthSize.value = 'sm'
+  }
+  else if (window.innerWidth < 768) {
+    windowWidthSize.value = 'md'
+  }
+  else if (window.innerWidth < 1024) {
+    windowWidthSize.value = 'lg'
+  }
+  else if (window.innerWidth < 1280) {
+    windowWidthSize.value = 'xl'
+  }
+  else {
+    windowWidthSize.value = '2xl'
+  }
+
+  if (windowWidthSize.value != 'sm') {
+    pendingAppointmentsExpandedRows.value = []
+  }
+}
+
+const onWindowLoad = (): void => {
+  onWindowResize()
+}
+
+window.addEventListener('load', onWindowLoad)
+window.addEventListener('resize', onWindowResize)
 
 const appointmentStore = useAppointmentStore()
 const { appointments, patchAppointmentStatus } = appointmentStore
@@ -37,6 +70,23 @@ const rejectedConfirmedAppointments = computed(() => {
   return appointments.data.filter((a) => a.appointmentStatusId == 3)
 })
 
+const pendingAppointmentsMenuItems = ref([
+  {
+      label: 'Odobri',
+      icon: 'pi pi-check',
+      command: () => {
+        onApproveAppointmentClick()
+      }
+  },
+  {
+      label: 'Odbij',
+      icon: 'pi pi-times',
+      command: () => {
+        onRejectAppointmentClick()
+      }
+  }
+]);
+
 appointmentStore.getAppointments()
 
 const reservationResponseObject = reactive(new ReservationResponse())
@@ -55,15 +105,23 @@ const confirmOrRejectAppointmentModalHeader = computed(() => {
 })
 const confirmOrRejectAppointmentId = ref(0)
 
-const onRejectAppointmentClick = (appointmentId: number): void => {
+const appointmentRecord: Ref<Appointment> = ref(new Appointment())
+const pendingAppointmentsTableItemsMenu = ref()
+
+const onRejectAppointmentClick = (): void => {
   confirmOrRejectAppointmentModalMode.value = AppointmentStatusChangeAction.Reject
-  confirmOrRejectAppointmentId.value = appointmentId
+  confirmOrRejectAppointmentId.value = appointmentRecord.value.appointmentId
   isConfirmOrRejectAppointmentModalVisible.value = true
 }
 
-const onApproveAppointmentClick = (appointmentId: number): void => {
+const onPendingAppointmentRowMenuClick = (e: any, selectedAppointment: Appointment) => {
+  appointmentRecord.value = selectedAppointment
+  pendingAppointmentsTableItemsMenu.value.toggle(e)
+}
+
+const onApproveAppointmentClick = (): void => {
   confirmOrRejectAppointmentModalMode.value = AppointmentStatusChangeAction.Approve
-  confirmOrRejectAppointmentId.value = appointmentId
+  confirmOrRejectAppointmentId.value = appointmentRecord.value.appointmentId
   isConfirmOrRejectAppointmentModalVisible.value = true
 }
 
@@ -83,7 +141,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
   <h1 class="text-2xl text-black font-light mb-6">Rezervacije</h1>
 
   <div class="grid grid-cols-4 gap-6">
-    <div class="col-span-4 lg:col-span-3">
+    <div class="col-span-4 lg:col-span-4">
       <Panel>
         <template #header>
           <div class="flex">
@@ -106,13 +164,17 @@ const onReservationResponseConfirm = async (): Promise<void> => {
             paginator
             :rows="5"
           >
-            <Column expander />
+            <Column class="table-cell lg:hidden" expander />
             <template #expansion="slotProps">
-              <div class="p-3">
+              <div class="p-3 lg:hidden">
                 <table>
                   <tr>
                     <th>Broj rezervacije:</th>
                     <td class="pl-3">{{ slotProps.data.appointmentId }}</td>
+                  </tr>
+                  <tr>
+                    <th>Usluga:</th>
+                    <td class="pl-3">{{ slotProps.data.serviceTypeName }}</td>
                   </tr>
                   <tr>
                     <th>Datum:</th>
@@ -141,12 +203,40 @@ const onReservationResponseConfirm = async (): Promise<void> => {
                 </table>
               </div>
             </template>
+            <Column 
+              class="hidden lg:table-cell"
+              field="appointmentId"
+              header="Broj rezervacije"
+            >
+            </Column>
             <Column>
               <template #body="slotProps">
                 {{ slotProps.data.customerFirstName + ' ' + slotProps.data.customerLastName }}
               </template>
             </Column>
-            <Column field="serviceTypeName" header="Usluga"></Column>
+            <Column class="hidden lg:table-cell">
+              <template #body="slotProps">
+                {{ useDefaultDateFormatter(slotProps.data.appointmentDate) }} 
+                {{ useDefaultTimeFormatter(slotProps.data.appointmentDate) }}
+              </template>
+            </Column>
+            <Column 
+              class="hidden lg:table-cell"
+              field="serviceTypeName" 
+              header="Usluga">
+            </Column>
+            <Column
+              class="hidden lg:table-cell"
+              field="customerEmail"
+              header="Email"  
+            >
+            </Column>
+            <Column
+              class="hidden lg:table-cell"
+              field="customerPhone"
+              header="Phone"  
+            >
+            </Column>
             <Column>
               <template #body="slotProps">
                 <div class="flex items-center">
@@ -158,23 +248,18 @@ const onReservationResponseConfirm = async (): Promise<void> => {
             <Column>
               <template #body="slotProps">
                 <Button
-                  size="small"
-                  severity="danger"
-                  icon="pi pi-times"
-                  class="!p-1 mr-2"
-                  outlined
-                  @click="onRejectAppointmentClick(slotProps.data.appointmentId)"
+                  class="!bg-transparent !p-0 !h-[32px] !w-[32px] !text-gray-400 !border-none hover:!bg-gray-100 hover:!text-black focus:!shadow-none"
+                  icon="pi pi-ellipsis-v"
+                  rounded
+                  @click="onPendingAppointmentRowMenuClick($event, slotProps.data)"
+                ></Button>
+                <Menu
+                  id="overlay_menu"
+                  ref="pendingAppointmentsTableItemsMenu"
+                  :model="pendingAppointmentsMenuItems"
+                  popup  
                 >
-                </Button>
-                <Button
-                  size="small"
-                  severity="success"
-                  icon="pi pi-check"
-                  class="!p-1"
-                  outlined
-                  @click="onApproveAppointmentClick(slotProps.data.appointmentId)"
-                >
-                </Button>
+                </Menu>
               </template>
             </Column>
           </DataTable>
@@ -234,7 +319,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
       </Panel>
     </div>
     <div class="col-span-4 lg:col-span-2">
-      <Panel>
+      <Panel toggleable :collapsed="windowWidthSize == 'sm'">
         <template #header>
           <div class="flex">
             <h1 class="font-semibold">Potvrđene rezervacije</h1>
@@ -316,7 +401,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
       </Panel>
     </div>
     <div class="col-span-4 lg:col-span-2">
-      <Panel>
+      <Panel toggleable :collapsed="windowWidthSize == 'sm'">
         <template #header>
           <div class="flex">
             <h1 class="font-semibold">Odbijene rezervacije</h1>
@@ -398,6 +483,7 @@ const onReservationResponseConfirm = async (): Promise<void> => {
       </Panel>
     </div>
   </div>
+  {{ computedScreenSize }}
 </template>
 
 <style scoped>
