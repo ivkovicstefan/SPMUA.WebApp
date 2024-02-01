@@ -38,6 +38,10 @@ const onWindowResize = (): void => {
   else {
     windowWidthSize.value = '2xl'
   }
+
+  if (windowWidthSize.value != 'sm') {
+    pendingAppointmentsExpandedRows.value = []
+  }
 }
 
 const onWindowLoad = (): void => {
@@ -160,13 +164,17 @@ const onReservationResponseConfirm = async (): Promise<void> => {
             paginator
             :rows="5"
           >
-            <Column expander />
+            <Column class="table-cell lg:hidden" expander />
             <template #expansion="slotProps">
-              <div class="p-3">
+              <div class="p-3 lg:hidden">
                 <table>
                   <tr>
                     <th>Broj rezervacije:</th>
                     <td class="pl-3">{{ slotProps.data.appointmentId }}</td>
+                  </tr>
+                  <tr>
+                    <th>Usluga:</th>
+                    <td class="pl-3">{{ slotProps.data.serviceTypeName }}</td>
                   </tr>
                   <tr>
                     <th>Datum:</th>
@@ -195,12 +203,40 @@ const onReservationResponseConfirm = async (): Promise<void> => {
                 </table>
               </div>
             </template>
+            <Column 
+              class="hidden lg:table-cell"
+              field="appointmentId"
+              header="Broj rezervacije"
+            >
+            </Column>
             <Column>
               <template #body="slotProps">
                 {{ slotProps.data.customerFirstName + ' ' + slotProps.data.customerLastName }}
               </template>
             </Column>
-            <Column field="serviceTypeName" header="Usluga"></Column>
+            <Column class="hidden lg:table-cell">
+              <template #body="slotProps">
+                {{ useDefaultDateFormatter(slotProps.data.appointmentDate) }} 
+                {{ useDefaultTimeFormatter(slotProps.data.appointmentDate) }}
+              </template>
+            </Column>
+            <Column 
+              class="hidden lg:table-cell"
+              field="serviceTypeName" 
+              header="Usluga">
+            </Column>
+            <Column
+              class="hidden lg:table-cell"
+              field="customerEmail"
+              header="Email"  
+            >
+            </Column>
+            <Column
+              class="hidden lg:table-cell"
+              field="customerPhone"
+              header="Phone"  
+            >
+            </Column>
             <Column>
               <template #body="slotProps">
                 <div class="flex items-center">
