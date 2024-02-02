@@ -11,6 +11,7 @@ import AdminServicesView from '../views/admin/AdminServicesView.vue'
 import AdminWorkingHoursView from '../views/admin/AdminWorkingHoursView.vue'
 import AdminVacationsView from '../views/admin/AdminVacationsView.vue'
 import { useAuthStore } from '@/stores/auth.store'
+import { storeToRefs } from 'pinia'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -98,9 +99,10 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const authStore = useAuthStore()
+  const { admin } = storeToRefs(authStore)
 
   if (to.meta && to.meta.isAuthRequired) {
-    if (!authStore.admin.isAuthenticated) {
+    if (!admin.value.isAuthenticated) {
       return { name: 'admin-login' }
     }
   }
