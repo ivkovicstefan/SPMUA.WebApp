@@ -1,4 +1,5 @@
 # SPMUA.WebApp
+![App Version](https://img.shields.io/badge/version-0.1.2-green.svg)
 
 A web application developed using Vue3 + Vite, Tailwind that represents the frotnend part of my thesis project.
 
