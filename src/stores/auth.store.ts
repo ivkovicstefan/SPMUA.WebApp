@@ -28,6 +28,7 @@ export const useAuthStore = defineStore('auth', {
         response = new Response(true, '', '')
 
         const admin = new Admin(result.data.adminFirstName + ' ' + result.data.adminLastName, true, result.data.token)
+        this.admin = admin
         localStorage.setItem('admin', JSON.stringify(admin))
       } catch (error: unknown) {
         if (error instanceof AxiosError) {
@@ -43,7 +44,7 @@ export const useAuthStore = defineStore('auth', {
     },
     logout() {
       //TODO: Check if there is a need to call API to destroy current token
-      localStorage.setItem('admin', JSON.stringify({}))
+      localStorage.removeItem('admin')
     }
   }
 })
