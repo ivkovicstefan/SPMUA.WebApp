@@ -10,6 +10,9 @@ import ProgressSpinner from 'primevue/progressspinner'
 import Dialog from 'primevue/dialog'
 import Textarea from 'primevue/textarea'
 import Menu from 'primevue/menu'
+import Calendar from 'primevue/calendar'
+import InputText from 'primevue/inputtext'
+import Dropdown from 'primevue/dropdown'
 import { ReservationResponse } from '@/types/entities/ReservationResponse'
 import { AppointmentStatusChangeAction } from '@/types/Enums'
 import { useAppointmentStore } from '@/stores/appointment.store'
@@ -19,6 +22,9 @@ import {
   useDateTimeAgoFormatter
 } from '@/composables/useDateTimeFormatter'
 import { Appointment } from '@/types/entities/Appointment'
+import { useServiceTypeStore } from '@/stores/service-type.store'
+import { AppointmentFilters } from '@/types/dtos/AppointmentFilters'
+import { ServiceType } from '@/types/entities/ServiceType'
 
 const windowWidthSize: Ref<String> = ref('')
 
@@ -53,6 +59,14 @@ window.addEventListener('resize', onWindowResize)
 
 const appointmentStore = useAppointmentStore()
 const { appointments, patchAppointmentStatus } = appointmentStore
+
+const serviceTypeStore = useServiceTypeStore()
+const { serviceTypes } = serviceTypeStore
+
+serviceTypeStore.getServiceTypes()
+
+const appointmentFilters = ref(new AppointmentFilters())
+const selectedServiceTypeFilterItem = new ServiceType()
 
 const pendingAppointmentsExpandedRows = ref([])
 const confirmedAppointmentsExpandedRows = ref([])
@@ -135,10 +149,90 @@ const onReservationResponseConfirm = async (): Promise<void> => {
   appointmentStore.getAppointments()
   reservationResponseObject.clear()
 }
+
+const isAppointmentFiltersModalVisible = ref(false)
+
+const onAppointmentFiltersClick = () => {
+  isAppointmentFiltersModalVisible.value = true
+}
 </script>
 
 <template>
-  <h1 class="text-2xl text-black font-light mb-6">Rezervacije</h1>
+  <div class="flex mb-6 items-center">
+    <h1 class="text-2xl text-black font-light">Rezervacije</h1>
+    <Button
+      v-if="!serviceTypes.isAborted"
+      class="ml-auto lg:ml-3 !bg-white border !border-zinc-300 !p-1 !h-[40px] !w-[40px] !text-black hover:!bg-gray-100 hover:!text-black focus:!shadow-none"
+      icon="pi pi-filter"
+      rounded
+      :disabled="serviceTypes.isLoading"
+      @click="onAppointmentFiltersClick"
+    ></Button>
+
+    <Dialog
+      v-model:visible="isAppointmentFiltersModalVisible"
+      modal
+      header="Filteri"
+      class="w-full lg:w-[400px]"
+    >
+      <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-2">
+          <label>
+            Datum rezervacije
+          </label>
+          <Calendar
+            placeholder="Tačan datum rezervacije"
+            v-model="appointmentFilters.appointmentDate"
+          ></Calendar>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label>
+            Ime klijenta
+          </label>
+          <InputText
+            placeholder="Puno ili deo imena i prezimena klijenta" 
+            v-model="appointmentFilters.customerFullName" 
+          ></InputText>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label>
+            Usluga
+          </label>
+          <Dropdown
+            :option-label="'serviceTypeName'"
+            :options="[{ serviceTypeName: 'Bilo koja usluga'}].concat(serviceTypes.data)"  
+            v-model="selectedServiceTypeFilterItem" 
+          ></Dropdown>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label>
+            Email adresa
+          </label>
+          <InputText
+            placeholder="npr. milastosic@gmail.com"
+            v-model="appointmentFilters.customerEmail"
+          ></InputText>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label>
+            Broj telefona
+          </label>
+          <InputText
+            placeholder="npr. 0601234567"
+            v-model="appointmentFilters.customerPhone"
+          ></InputText>
+        </div>
+      </div>
+      <template #footer>
+        <Button
+          severity="success"
+          class="!w-full"
+          label="Primeni"
+        >
+        </Button>
+      </template>
+    </Dialog>
+  </div>
 
   <div class="grid grid-cols-4 gap-6">
     <div class="col-span-4 lg:col-span-4">
