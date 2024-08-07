@@ -4,6 +4,7 @@ import AdminLayout from '../layouts/AdminLayout.vue'
 import HomeView from '../views/public/HomeView.vue'
 import GalleryView from '../views/public/GalleryView.vue'
 import AboutMeView from '../views/public/AboutMeView.vue'
+import ReservationStatusView from '../views/public/ReservationStatusView.vue'
 import AdminLoginView from '../views/admin/AdminLoginView.vue'
 import AdminDashboardView from '../views/admin/AdminDashboardView.vue'
 import AdminCalendarView from '../views/admin/AdminCalendarView.vue'
@@ -42,6 +43,11 @@ const router = createRouter({
       path: '/login',
       name: 'admin-login',
       component: AdminLoginView
+    },
+    {
+      path: '/reservation-status',
+      name: 'reservation-status',
+      component: ReservationStatusView
     },
     {
       path: '/admin',

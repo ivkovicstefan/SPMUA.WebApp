@@ -11,7 +11,8 @@ export const useAppointmentStore = defineStore('appointment', {
       patchAppointmentStatus: useApi('/api/appointment/appointment/status') as ApiWrapper,
       unavailableDates: useApi('/api/appointment/unavailable-dates') as ApiWrapper,
       availableHours: useApi('/api/appointment/available-hours') as ApiWrapper,
-      postAppointment: useApi('/api/appointment/appointment') as ApiWrapper
+      postAppointment: useApi('/api/appointment/appointment') as ApiWrapper,
+      appointmentStatus: useApi('/api/appointment/appointment/:id/status') as ApiWrapper
     }
   },
   actions: {
@@ -56,6 +57,17 @@ export const useAppointmentStore = defineStore('appointment', {
           method: 'POST'
         },
         true
+      )
+    },
+    async getAppointmentStatus(appointmentId: Number, phoneNumber: String): Promise<void> {
+      await this.appointmentStatus.execute(
+        `/api/appointment/appointment/${appointmentId}/status`,
+        undefined,
+        { 
+          params: {
+            customerPhone: phoneNumber
+          }
+        } 
       )
     }
   }
