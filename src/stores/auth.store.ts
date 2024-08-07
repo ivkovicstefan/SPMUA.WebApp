@@ -44,7 +44,9 @@ export const useAuthStore = defineStore('auth', {
     },
     logout() {
       //TODO: Check if there is a need to call API to destroy current token
+      this.admin = {}
       localStorage.removeItem('admin')
+
     }
   }
 })
