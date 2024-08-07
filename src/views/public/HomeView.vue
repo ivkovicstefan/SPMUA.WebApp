@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, onUnmounted } from 'vue'
 import AppRadioGroup from '@/components/AppRadioGroup.vue'
 import AppStepWizard from '@/components/AppStepWizard.vue'
 import Calendar from 'primevue/calendar'
@@ -21,6 +21,12 @@ import {
 } from '@/composables/useDateTimeFormatter'
 import { useVuelidate } from '@vuelidate/core'
 import { maxLength, email, required, helpers } from '@vuelidate/validators'
+
+onUnmounted(() => {
+  postAppointment.reset()
+  newAppointmentObject.reset()
+  availableHours.reset()
+})
 
 const bookAppointmentSection = ref(null)
 
