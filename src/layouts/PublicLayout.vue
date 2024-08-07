@@ -114,7 +114,7 @@ const menuBarItems = ref([
         <div class="flex order-3 flex-col">
           <h1 class="text-[2.35rem] lg:text-5xl mb-6">Linkovi</h1>
           <RouterLink class="hover:text-gold-600" :to="{ name: 'admin-dashboard' }">Administracija</RouterLink>
-          <RouterLink class="hover:text-gold-600" :to="{ name: 'home' }">Provera statusa rezervacije</RouterLink>
+          <RouterLink class="hover:text-gold-600" :to="{ name: 'reservation-status' }">Provera statusa rezervacije</RouterLink>
         </div>
 
       </div>
