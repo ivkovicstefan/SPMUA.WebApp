@@ -18,6 +18,10 @@ const menuBarItems = ref([
   {
     label: 'Galerija',
     route: '/gallery'
+  },
+  {
+    label: 'O meni',
+    route: '/about'
   }
 ])
 </script>

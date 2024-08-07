@@ -3,6 +3,7 @@ import PublicLayout from '../layouts/PublicLayout.vue'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import HomeView from '../views/public/HomeView.vue'
 import GalleryView from '../views/public/GalleryView.vue'
+import AboutMeView from '../views/public/AboutMeView.vue'
 import AdminLoginView from '../views/admin/AdminLoginView.vue'
 import AdminDashboardView from '../views/admin/AdminDashboardView.vue'
 import AdminCalendarView from '../views/admin/AdminCalendarView.vue'
@@ -29,6 +30,11 @@ const router = createRouter({
           path: '/gallery',
           name: 'gallery',
           component: GalleryView
+        },
+        {
+          path: '/about',
+          name: 'about-me',
+          component: AboutMeView
         }
       ]
     },
