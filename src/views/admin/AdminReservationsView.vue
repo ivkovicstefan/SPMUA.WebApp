@@ -155,6 +155,18 @@ const isAppointmentFiltersModalVisible = ref(false)
 const onAppointmentFiltersClick = () => {
   isAppointmentFiltersModalVisible.value = true
 }
+
+const onApplyFiltersClick = () => {
+  appointmentStore
+  .getAppointments(appointmentFilters.value.appointmentDate,
+                   appointmentFilters.value.customerFullName,
+                   appointmentFilters.value.customerEmail,
+                   appointmentFilters.value.serviceType.serviceTypeId,
+                   appointmentFilters.value.customerPhone
+  )
+
+  isAppointmentFiltersModalVisible.value = false
+}
 </script>
 
 <template>
@@ -183,6 +195,7 @@ const onAppointmentFiltersClick = () => {
           <Calendar
             placeholder="Tačan datum rezervacije"
             v-model="appointmentFilters.appointmentDate"
+            fluid
           ></Calendar>
         </div>
         <div class="flex flex-col gap-2">
@@ -200,8 +213,8 @@ const onAppointmentFiltersClick = () => {
           </label>
           <Dropdown
             :option-label="'serviceTypeName'"
-            :options="[{ serviceTypeName: 'Bilo koja usluga'}].concat(serviceTypes.data)"  
-            v-model="selectedServiceTypeFilterItem" 
+            :options="[{ serviceTypeName: 'Bilo koja usluga', serviceTypeId: null}].concat(serviceTypes.data)"  
+            v-model="appointmentFilters.serviceType" 
           ></Dropdown>
         </div>
         <div class="flex flex-col gap-2">
@@ -228,6 +241,7 @@ const onAppointmentFiltersClick = () => {
           severity="success"
           class="!w-full"
           label="Primeni"
+          @click="onApplyFiltersClick"
         >
         </Button>
       </template>
