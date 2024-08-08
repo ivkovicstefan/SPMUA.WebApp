@@ -16,8 +16,29 @@ export const useAppointmentStore = defineStore('appointment', {
     }
   },
   actions: {
-    async getAppointments(): Promise<void> {
-      await this.appointments.execute(undefined, undefined, undefined, true)
+    async getAppointments(
+      appointmentDate: Date|null = null,
+      customerFullName: String|null = null,
+      customerEmail: String|null = null,
+      serviceTypeId: Number|null = null,
+      customerPhone: String|null = null
+    ): Promise<void> {
+
+      if (appointmentDate) {
+        appointmentDate.setTime(appointmentDate.getTime() - appointmentDate.getTimezoneOffset() * 60000)
+      }
+
+      await this.appointments.execute(undefined, undefined, {
+        params: {
+          AppointmentDate: appointmentDate,
+          CustomerFullName: customerFullName,
+          CustomerEmail: customerEmail,
+          ServiceTypeId: serviceTypeId,
+          CustomerPhone: customerPhone
+        }
+      }, true)
+
+      console.log(this.appointments.data)
     },
     async updateAppointmentStatus(reservationResponseObject: ReservationResponse): Promise<void> {
       await this.patchAppointmentStatus.execute(
