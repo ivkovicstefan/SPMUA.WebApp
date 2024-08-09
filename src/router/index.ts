@@ -53,25 +53,25 @@ const router = createRouter({
       path: '/admin',
       component: AdminLayout,
       redirect: () => {
-        return '/admin/dashboard'
+        return '/admin/reservations'
       },
       children: [
-        {
-          path: 'dashboard',
-          name: 'admin-dashboard',
-          component: AdminDashboardView,
-          meta: {
-            isAuthRequired: true
-          }
-        },
-        {
-          path: 'calendar',
-          name: 'admin-calendar',
-          component: AdminCalendarView,
-          meta: {
-            isAuthRequired: true
-          }
-        },
+        // {
+        //   path: 'dashboard',
+        //   name: 'admin-dashboard',
+        //   component: AdminDashboardView,
+        //   meta: {
+        //     isAuthRequired: true
+        //   }
+        // },
+        // {
+        //   path: 'calendar',
+        //   name: 'admin-calendar',
+        //   component: AdminCalendarView,
+        //   meta: {
+        //     isAuthRequired: true
+        //   }
+        // },
         {
           path: 'reservations',
           name: 'admin-reservations',

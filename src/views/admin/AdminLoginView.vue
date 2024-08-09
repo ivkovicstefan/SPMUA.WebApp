@@ -18,7 +18,7 @@ const onLoginClick = async () => {
   let response = await authStore.login(email.value, password.value)
 
   if (response.isSuccessful) {
-    router.push({ name: 'admin-dashboard' })
+    router.push({ name: 'admin-reservations' })
   } else {
     errorMessage.value = response.message
   }
