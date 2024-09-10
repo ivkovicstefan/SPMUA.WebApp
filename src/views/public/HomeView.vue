@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, onUnmounted } from 'vue'
 import AppRadioGroup from '@/components/AppRadioGroup.vue'
 import AppStepWizard from '@/components/AppStepWizard.vue'
 import Calendar from 'primevue/calendar'
@@ -21,6 +21,12 @@ import {
 } from '@/composables/useDateTimeFormatter'
 import { useVuelidate } from '@vuelidate/core'
 import { maxLength, email, required, helpers } from '@vuelidate/validators'
+
+onUnmounted(() => {
+  postAppointment.reset()
+  newAppointmentObject.reset()
+  availableHours.reset()
+})
 
 const bookAppointmentSection = ref(null)
 
@@ -239,7 +245,6 @@ const computedAppointmentService = computed(() => {
 })
 
 const computedIsStepWizardNextButtonDisabled = computed(() => {
-  console.log(v$.value)
   if (currentStepIndex.value == 0) {
     return false
   }
@@ -575,7 +580,7 @@ const onNewReservationClickHandler = () => {
             </Message>
             <Message class="!border-l-0 !border-t-2 shadow-lg" severity="info" :closable="false">
               <div class="ml-3">
-                Status rezervacije možeš da proveriš klikom <RouterLink to="/gallery"><b>ovde</b></RouterLink>.
+                Status rezervacije možeš da proveriš klikom <RouterLink to="/reservation-status"><b>ovde</b></RouterLink>.
                 <div class="mt-2" v-if="newAppointmentObject.customerEmail.length > 0">
                   O promeni statusa rezervacije dobićeš notifikaciju putem email adrese.
                 </div>

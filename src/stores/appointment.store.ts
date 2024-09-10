@@ -11,12 +11,34 @@ export const useAppointmentStore = defineStore('appointment', {
       patchAppointmentStatus: useApi('/api/appointment/appointment/status') as ApiWrapper,
       unavailableDates: useApi('/api/appointment/unavailable-dates') as ApiWrapper,
       availableHours: useApi('/api/appointment/available-hours') as ApiWrapper,
-      postAppointment: useApi('/api/appointment/appointment') as ApiWrapper
+      postAppointment: useApi('/api/appointment/appointment') as ApiWrapper,
+      appointmentStatus: useApi('/api/appointment/appointment/:id/status') as ApiWrapper
     }
   },
   actions: {
-    async getAppointments(): Promise<void> {
-      await this.appointments.execute(undefined, undefined, undefined, true)
+    async getAppointments(
+      appointmentDate: Date|null = null,
+      customerFullName: String|null = null,
+      customerEmail: String|null = null,
+      serviceTypeId: Number|null = null,
+      customerPhone: String|null = null
+    ): Promise<void> {
+
+      if (appointmentDate) {
+        appointmentDate.setTime(appointmentDate.getTime() - appointmentDate.getTimezoneOffset() * 60000)
+      }
+
+      await this.appointments.execute(undefined, undefined, {
+        params: {
+          AppointmentDate: appointmentDate,
+          CustomerFullName: customerFullName,
+          CustomerEmail: customerEmail,
+          ServiceTypeId: serviceTypeId,
+          CustomerPhone: customerPhone
+        }
+      }, true)
+
+      console.log(this.appointments.data)
     },
     async updateAppointmentStatus(reservationResponseObject: ReservationResponse): Promise<void> {
       await this.patchAppointmentStatus.execute(
@@ -56,6 +78,17 @@ export const useAppointmentStore = defineStore('appointment', {
           method: 'POST'
         },
         true
+      )
+    },
+    async getAppointmentStatus(appointmentId: Number, phoneNumber: String): Promise<void> {
+      await this.appointmentStatus.execute(
+        `/api/appointment/appointment/${appointmentId}/status`,
+        undefined,
+        { 
+          params: {
+            customerPhone: phoneNumber
+          }
+        } 
       )
     }
   }

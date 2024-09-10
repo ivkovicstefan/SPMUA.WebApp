@@ -15,16 +15,16 @@ const computedAdminInitials = computed(() => {
 })
 
 const sideMenuItems = ref([
-  {
-    label: 'Kontrolna tabla',
-    icon: 'pi pi-home',
-    to: { name: 'admin-dashboard' }
-  },
-  {
-    label: 'Kalendar',
-    icon: 'pi pi-calendar',
-    to: { name: 'admin-calendar' }
-  },
+  // {
+  //   label: 'Kontrolna tabla',
+  //   icon: 'pi pi-home',
+  //   to: { name: 'admin-dashboard' }
+  // },
+  // {
+  //   label: 'Kalendar',
+  //   icon: 'pi pi-calendar',
+  //   to: { name: 'admin-calendar' }
+  // },
   {
     label: 'Rezervacije',
     icon: 'pi pi-check-circle',
