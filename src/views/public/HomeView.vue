@@ -289,8 +289,8 @@ const onNewReservationClickHandler = () => {
 <template>
   <div class="flex flex-col">
     <!-- Hero Section -->
-    <div class="h-[calc(100vh-160px)] lg:h-auto flex flex-col lg:flex-row self-center overflow-hidden p-0 lg:px-48">
-      <div class="flex-1 px-10 py-5 lg:px-0">
+    <div class="h-[calc(100vh-160px)] lg:h-auto flex flex-col lg:flex-row self-center overflow-hidden p-0 xl:px-48">
+      <div class="flex-1 px-10 py-5 xl:px-0">
         <h1 class="leading-[1] text-[2.35rem] lg:text-5xl font-semibold">
           Neka moje četkice ispričaju tvoju priču.
         </h1>
@@ -306,14 +306,18 @@ const onNewReservationClickHandler = () => {
       />
     </div>
     <!-- Services Section -->
-    <div class="order-2 lg:order-3 px-10 py-6 lg:px-48 flex flex-col bg-white lg:hidden">
-      <h1 class="leading-[1] text-[2.35rem] lg:text-5xl mb-12">Usluge</h1>
+    <div class="order-2 lg:order-3 px-10 py-6 xl:px-48 flex flex-col bg-white lg:hidden">
+      <h1 class="leading-[1] text-[2.35rem] xl:text-5xl mb-12">Usluge</h1>
       <TransitionGroup 
         element="div" 
         name="fade-500"  
       >
         <div v-if="serviceTypes.isFinished" class="grid grid-cols-4 gap-6">
-          <div v-for="item in serviceTypes.data" class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl col-span-4 lg:col-span-1 flex flex-col bg-white hover:scale-105 transition duration-200 cursor-default">
+          <div 
+            v-for="(item, index) in serviceTypes.data" 
+            class="shadow-lg border-t-2 border-zinc-300 hover:border-black rounded-xl col-span-4 md:col-span-2 lg:col-span-1 flex flex-col bg-white hover:scale-105 transition duration-200 cursor-default"
+            :key="index"  
+          >
             <div class="flex p-3 flex-col">
               <h1 class="text-xl font-semibold">{{ item.serviceTypeName }}</h1>
               <p class="text-zinc-400"></p>
@@ -346,7 +350,7 @@ const onNewReservationClickHandler = () => {
       </div>
     </div>
     <!-- Gallery Section -->
-    <div class="order-3 lg:order-2 py-6 lg:px-48 bg-white px-10 ">
+    <div class="order-3 lg:order-2 py-6 xl:px-48 bg-white px-10 ">
       <div class="flex mb-12 items-center">
         <h1 class="leading-[1] text-[2.35rem] lg:text-5xl lg:hidden">Galerija</h1>
         <RouterLink to="/gallery" class="ml-auto">
@@ -358,7 +362,7 @@ const onNewReservationClickHandler = () => {
           ></Button>
         </RouterLink>
       </div>
-      <div class="grid grid-cols-3 gap-6 lg:grid-cols-6 lg:mt-[-14.5rem]">
+      <div class="grid grid-cols-3 gap-6 lg:grid-cols-6 lg:mt-[-11.5rem] xl:mt-[-14.5rem]">
         <video
           class="col-span-2 row-span-2 lg:hidden rounded-xl object-cover aspect-square"
           autoplay
@@ -408,7 +412,8 @@ const onNewReservationClickHandler = () => {
               v-if="serviceTypes.isFinished"      
               v-model:model-value="newAppointmentObject.serviceTypeId"
               :items="serviceTypes.data"
-              :options="{ valueProperty: 'serviceTypeId', itemDirection: 'column' }"
+              :container-class="'grid-cols-1 lg:grid-cols-3'"
+              :options="{ valueProperty: 'serviceTypeId' }"
             >
               <template #radioItem="{ item }">
                 <div class="p-3 flex justify-between">
@@ -435,206 +440,217 @@ const onNewReservationClickHandler = () => {
           </div>
         </template>
         <template #step2Content>
-          <div class="flex items-center gap-3 mb-5">
-            <Badge value="2"></Badge>
-            <p>Pritiskom na željeni dan proveri dostupne termine.</p>
-          </div>
-          <Calendar
-            v-model:model-value="newAppointmentObject.appointmentDate"
-            :showOtherMonths="true"
-            :selectOtherMonths="true"
-            :min-date="getTomorowDate()"
-            class="drop-shadow-lg w-full mb-3"
-            :disabled-days="computedDisabledDays"
-            :disabled-dates="computedDisabledDates"
-            inline
-            @month-change="onMonthChange"
-            @date-select="onAppointmentDateChange"
-          >
-          </Calendar>
-          <TransitionGroup tag="div" name="fade">
-            <div 
-              v-show="availableHoursLoadedOnce"
-              class="flex items-center gap-3 mt-3 mb-6">
-              <Badge value="3"></Badge>
-              <p>Pritiskom na stavku ispod odaberi neki od ponuđenih termina.</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-6">
+            <div>
+              <div class="flex items-center gap-3 mb-3 lg:mb-6">
+                <Badge value="2"></Badge>
+                <p>Pritiskom na željeni dan proveri dostupne termine.</p>
+              </div>
+              <Calendar
+                v-model:model-value="newAppointmentObject.appointmentDate"
+                :showOtherMonths="true"
+                :selectOtherMonths="true"
+                :min-date="getTomorowDate()"
+                class="drop-shadow-lg w-full"
+                :disabled-days="computedDisabledDays"
+                :disabled-dates="computedDisabledDates"
+                inline
+                @month-change="onMonthChange"
+                @date-select="onAppointmentDateChange"
+              >
+              </Calendar>
             </div>
-            <AppRadioGroup
-              v-if="availableHours.isFinished"
-              v-model:model-value="appointmentTime"
-              class="z-[10]"
-              :items="computedAvailableHours"
-              :options="{ valueProperty: 'time', itemDirection: 'row' }"
-            >
-              <template #radioItem="{ item }">
-                <div class="p-3 px-5 text-xl">
-                  {{ item.time.slice(0, -3) }}
-                </div>
-              </template>
-            </AppRadioGroup>
-          </TransitionGroup>
+            <TransitionGroup tag="div" name="fade">
+              <div 
+                v-show="availableHoursLoadedOnce"
+                class="flex items-center gap-3 mb-3 lg:mb-6">
+                <Badge value="3"></Badge>
+                <p>Pritiskom na stavku ispod odaberi neki od ponuđenih termina.</p>
+              </div>
+              <AppRadioGroup
+                v-if="availableHours.isFinished"
+                v-model:model-value="appointmentTime"
+                class="z-[10]"
+                :container-class="'grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 mb-6'"
+                :items="computedAvailableHours"
+                :options="{ valueProperty: 'time' }"
+              >
+                <template #radioItem="{ item }">
+                  <div class="p-3 px-5 text-xl">
+                    {{ item.time.slice(0, -3) }}
+                  </div>
+                </template>
+              </AppRadioGroup>
+            </TransitionGroup>
+          </div>
         </template>
         <template #step3Content>
-          <div class="flex flex-col gap-3">
-            <div 
-              class="flex items-center gap-3 mb-3">
-              <Badge value="4"></Badge>
-              <p>Unesi kontakt podatke.</p>
-            </div>
-            <div class="flex flex-col gap-2">
-              <label>
-                Ime
-              </label>
-              <span class="p-input-icon-right">
-                  <i v-show="newAppointmentObject.customerFirstName.trim().length > 0 && !(v$.customerFirstName.$errors.length > 0)" class="pi pi-check !text-green-500 font-bold" />
-                    <InputText
-                      class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
-                      :class="{ '!border-red-600': v$.customerFirstName.$errors.length > 0 }"
-                      v-model="newAppointmentObject.customerFirstName"
-                      placeholder="Ime"
-                      @blur="v$.customerFirstName.$touch()"
-                    ></InputText>
-              </span>
-              <p v-if="v$.customerFirstName.$errors.length > 0"
-                class="text-sm text-red-600">
-                {{ v$.customerFirstName.$errors[0].$message }}
-              </p>
-            </div>
-            <div class="flex flex-col gap-2">
-              <label>
-                Prezime
-              </label>
-              <span class="p-input-icon-right">
-                  <i v-show="newAppointmentObject.customerLastName.trim().length > 0 && !(v$.customerLastName.$errors.length > 0)" class="pi pi-check !text-green-500 font-bold" />
-                    <InputText
-                      class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
-                      :class="{ '!border-red-600': v$.customerLastName.$errors.length > 0 }"
-                      v-model="newAppointmentObject.customerLastName"
-                      placeholder="Prezime"
-                      @blur="v$.customerLastName.$touch()"
-                    ></InputText>
-              </span>
-              <p v-if="v$.customerLastName.$errors.length > 0"
-                class="text-sm text-red-600">
-                {{ v$.customerLastName.$errors[0].$message }}
-              </p>
-            </div>
-            <div class="flex flex-col gap-2">
-              <label>
-                Email adresa <span class="text-zinc-400 text-sm">(nije obavezno)</span>
-              </label>
-              <span class="p-input-icon-right">
-                <i v-show="newAppointmentObject.customerEmail.trim().length > 0 && !(v$.customerEmail.$errors.length > 0)" class="pi pi-bell !text-green-500 font-bold" />
-                <InputText
-                  type="email"
-                  class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
-                  :class="{ '!border-red-600': v$.customerEmail.$errors.length > 0 }"
-                  v-model="newAppointmentObject.customerEmail"
-                  placeholder="Email adresa"
-                  @blur="v$.customerEmail.$touch()"
-                ></InputText>
-              </span>
-              <p v-if="v$.customerEmail.$errors.length > 0"
-                class="text-sm text-red-600">
-                {{ v$.customerEmail.$errors[0].$message }}
-              </p>
-              <label 
-                class="text-sm text-zinc-400"
-              >
-                Ostavi svoj email i budi u toku - dobijaj automatska obaveštenja o promenama statusa tvoje rezervacije.
-              </label>
-            </div>
-            <div class="flex flex-col gap-2">
-              <label>
-                Broj mobilnog telefona
-              </label>
-              <span class="p-input-icon-right">
-                <i v-show="newAppointmentObject.customerPhone.length > 0" class="pi pi-check !text-green-500 font-bold" />
-                <InputMask
-                  class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
-                  v-model="newAppointmentObject.customerPhone"
-                  mask="0699999999"
-                  placeholder="0601234567"
-                ></InputMask>
-              </span>
-            </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-6">
+            <div class="flex flex-col gap-3">
+              <div 
+                class="flex items-center gap-3 mb-3">
+                <Badge value="4"></Badge>
+                <p>Unesi kontakt podatke.</p>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label>
+                  Ime
+                </label>
+                <span class="p-input-icon-right">
+                    <i v-show="newAppointmentObject.customerFirstName.trim().length > 0 && !(v$.customerFirstName.$errors.length > 0)" class="pi pi-check !text-green-500 font-bold" />
+                      <InputText
+                        class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                        :class="{ '!border-red-600': v$.customerFirstName.$errors.length > 0 }"
+                        v-model="newAppointmentObject.customerFirstName"
+                        placeholder="Ime"
+                        @blur="v$.customerFirstName.$touch()"
+                      ></InputText>
+                </span>
+                <p v-if="v$.customerFirstName.$errors.length > 0"
+                  class="text-sm text-red-600">
+                  {{ v$.customerFirstName.$errors[0].$message }}
+                </p>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label>
+                  Prezime
+                </label>
+                <span class="p-input-icon-right">
+                    <i v-show="newAppointmentObject.customerLastName.trim().length > 0 && !(v$.customerLastName.$errors.length > 0)" class="pi pi-check !text-green-500 font-bold" />
+                      <InputText
+                        class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                        :class="{ '!border-red-600': v$.customerLastName.$errors.length > 0 }"
+                        v-model="newAppointmentObject.customerLastName"
+                        placeholder="Prezime"
+                        @blur="v$.customerLastName.$touch()"
+                      ></InputText>
+                </span>
+                <p v-if="v$.customerLastName.$errors.length > 0"
+                  class="text-sm text-red-600">
+                  {{ v$.customerLastName.$errors[0].$message }}
+                </p>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label>
+                  Email adresa <span class="text-zinc-400 text-sm">(nije obavezno)</span>
+                </label>
+                <span class="p-input-icon-right">
+                  <i v-show="newAppointmentObject.customerEmail.trim().length > 0 && !(v$.customerEmail.$errors.length > 0)" class="pi pi-bell !text-green-500 font-bold" />
+                  <InputText
+                    type="email"
+                    class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                    :class="{ '!border-red-600': v$.customerEmail.$errors.length > 0 }"
+                    v-model="newAppointmentObject.customerEmail"
+                    placeholder="Email adresa"
+                    @blur="v$.customerEmail.$touch()"
+                  ></InputText>
+                </span>
+                <p v-if="v$.customerEmail.$errors.length > 0"
+                  class="text-sm text-red-600">
+                  {{ v$.customerEmail.$errors[0].$message }}
+                </p>
+                <label 
+                  class="text-sm text-zinc-400"
+                >
+                  Ostavi svoj email i budi u toku - dobijaj automatska obaveštenja o promenama statusa tvoje rezervacije.
+                </label>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label>
+                  Broj mobilnog telefona
+                </label>
+                <span class="p-input-icon-right">
+                  <i v-show="newAppointmentObject.customerPhone.length > 0" class="pi pi-check !text-green-500 font-bold" />
+                  <InputMask
+                    class="!border-0 !border-t-2 shadow-lg focus:!shadow-lg w-full"
+                    v-model="newAppointmentObject.customerPhone"
+                    mask="0699999999"
+                    placeholder="0601234567"
+                  ></InputMask>
+                </span>
+              </div>
+            </div>         
           </div>
         </template>
         <template #step4Content>
-          <div 
-              v-show="!postAppointment.isFinished"
-              class="flex items-center gap-3 mb-6">
-              <Badge value="5"></Badge>
-              <p>Proveri unete podatke.</p>
-          </div>
-          <div v-if="postAppointment.isFinished">
-            <Message class="!border-l-0 !border-t-2 shadow-lg" severity="success" :closable="false">
-              <div class="ml-3">
-                Zahtev za rezervaciju je uspešno poslat!
-                <br>
-                Broj tvoje rezervacije je <b>{{ postAppointment.data }}</b>.
-                <div class="mt-2" v-if="newAppointmentObject.customerEmail.length > 0">
-                  Informacije o rezervaciji su poslate na tvoju email adresu.
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+            <div class="md:order-2 flex flex-col gap-3 md:gap-6" v-if="postAppointment.isFinished">
+              <Message class="!border-l-0 !border-t-2 shadow-lg !m-0" severity="success" :closable="false">
+                <div class="ml-3">
+                  Zahtev za rezervaciju je uspešno poslat!
+                  <br>
+                  Broj tvoje rezervacije je <b>{{ postAppointment.data }}</b>.
+                  <div class="mt-2" v-if="newAppointmentObject.customerEmail.length > 0">
+                    Informacije o rezervaciji su poslate na tvoju email adresu.
+                  </div>
                 </div>
-              </div>
-            </Message>
-            <Message class="!border-l-0 !border-t-2 shadow-lg" severity="info" :closable="false">
-              <div class="ml-3">
-                Status rezervacije možeš da proveriš klikom <RouterLink to="/reservation-status"><b>ovde</b></RouterLink>.
-                <div class="mt-2" v-if="newAppointmentObject.customerEmail.length > 0">
-                  O promeni statusa rezervacije dobićeš notifikaciju putem email adrese.
+              </Message>
+              <Message class="!border-l-0 !border-t-2 shadow-lg !m-0" severity="info" :closable="false">
+                <div class="ml-3">
+                  Status rezervacije možeš da proveriš klikom <RouterLink to="/reservation-status"><b>ovde</b></RouterLink>.
+                  <div class="mt-2" v-if="newAppointmentObject.customerEmail.length > 0">
+                    O promeni statusa rezervacije dobićeš notifikaciju putem email adrese.
+                  </div>
                 </div>
-              </div>
-            </Message>
-          </div>
-          <div class="flex flex-col gap-3">
-            <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
-              <h1 class="text-zinc-400">Usluga</h1>
-              <div class="flex justify-between">
-                <div class="flex flex-col">
-                  <h1 class="font-semibold text-lg">
-                    {{ computedAppointmentService.serviceTypeName }}
-                  </h1>
-                  <h1>{{ computedAppointmentService.serviceTypePrice.toFixed(2) }} RSD</h1>
-                </div>
-              </div>
+              </Message>
             </div>
-            <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
-              <h1 class="text-zinc-400">Termin</h1>
-              <div class="flex justify-between" v-if="newAppointmentObject.appointmentDate">
-                <div class="flex flex-col">
-                  <h1 class="font-semibold text-lg">
-                    {{
-                      useDefaultDateFormatter(newAppointmentObject.appointmentDate.toDateString())
-                    }}
-                  </h1>
-                  <h1 class="text-lg">
-                    {{
-                      useDefaultTimeFormatter(newAppointmentObject.appointmentDate)
-                    }}
-                    - {{ useDefaultTimeFormatter(new Date(newAppointmentObject.appointmentDate.getTime() + (computedAppointmentService.serviceTypeDuration) * 60000)) }}
-                  </h1>
-                </div>
+            <div>
+              <div 
+                v-show="!postAppointment.isFinished"
+                class="flex items-center gap-3 mb-6">
+                <Badge value="5"></Badge>
+                <p>Proveri unete podatke.</p>
               </div>
-            </div>
-            <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
-              <h1 class="text-zinc-400">Kontakt podaci</h1>
-              <div class="flex justify-between">
-                <div class="flex flex-col">
-                  <h1 class="font-semibold text-lg">
-                    {{
-                      newAppointmentObject.customerFirstName +
-                      ' ' +
-                      newAppointmentObject.customerLastName
-                    }}
-                  </h1>
-                  <h1 v-show="newAppointmentObject.customerEmail.length > 0" class="text-lg">
-                    <span class="pi pi-envelope mr-2"></span
-                    >{{ newAppointmentObject.customerEmail }}
-                  </h1>
-                  <h1 class="text-lg">
-                    <span class="pi pi-phone mr-2"></span>{{ newAppointmentObject.customerPhone }}
-                  </h1>
+              <div class="flex flex-col gap-3 md:gap-6">
+                <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
+                  <h1 class="text-zinc-400">Usluga</h1>
+                  <div class="flex justify-between">
+                    <div class="flex flex-col">
+                      <h1 class="font-semibold text-lg">
+                        {{ computedAppointmentService.serviceTypeName }}
+                      </h1>
+                      <h1>{{ computedAppointmentService.serviceTypePrice.toFixed(2) }} RSD</h1>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
+                  <h1 class="text-zinc-400">Termin</h1>
+                  <div class="flex justify-between" v-if="newAppointmentObject.appointmentDate">
+                    <div class="flex flex-col">
+                      <h1 class="font-semibold text-lg">
+                        {{
+                          useDefaultDateFormatter(newAppointmentObject.appointmentDate.toDateString())
+                        }}
+                      </h1>
+                      <h1 class="text-lg">
+                        {{
+                          useDefaultTimeFormatter(newAppointmentObject.appointmentDate)
+                        }}
+                        - {{ useDefaultTimeFormatter(new Date(newAppointmentObject.appointmentDate.getTime() + (computedAppointmentService.serviceTypeDuration) * 60000)) }}
+                      </h1>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex flex-col border-t-2 border-black shadow-lg rounded-lg bg-white py-2 px-3">
+                  <h1 class="text-zinc-400">Kontakt podaci</h1>
+                  <div class="flex justify-between">
+                    <div class="flex flex-col">
+                      <h1 class="font-semibold text-lg">
+                        {{
+                          newAppointmentObject.customerFirstName +
+                          ' ' +
+                          newAppointmentObject.customerLastName
+                        }}
+                      </h1>
+                      <h1 v-show="newAppointmentObject.customerEmail.length > 0" class="text-lg">
+                        <span class="pi pi-envelope mr-2"></span
+                        >{{ newAppointmentObject.customerEmail }}
+                      </h1>
+                      <h1 class="text-lg">
+                        <span class="pi pi-phone mr-2"></span>{{ newAppointmentObject.customerPhone }}
+                      </h1>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

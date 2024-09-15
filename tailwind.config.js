@@ -3,6 +3,17 @@
 module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
+    screens: {
+      'sm': '640px',
+
+      'md': '768px',
+
+      'lg': '960px',
+
+      'xl': '1513px',
+
+      '2xl': '1673px',
+    },
     extend: {
       colors: {
         'gold': {

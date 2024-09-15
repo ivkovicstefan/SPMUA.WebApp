@@ -67,7 +67,7 @@ const onNewReservationClick = () => {
 <template>
   <!-- Mobile version -->
   <div class="flex flex-col h-screen bg-zinc-50 border-y">
-    <div class="px-10 pt-6 pb-3">
+    <div class="px-10 py-6 xl:px-48">
       <!-- App Steps -->
       <AppSteps :steps-count="items.length" :current-step-index="currentStepIndex"> </AppSteps>
 
@@ -75,7 +75,7 @@ const onNewReservationClick = () => {
         {{ items[currentStepIndex].stepTitle }}
       </h1>
     </div>
-    <div class="flex-grow px-10 py-6 bg-zinc-50 overflow-y-auto overflow-x-hidden">
+    <div class="flex-grow px-10 py-6 xl:px-48 bg-zinc-50 overflow-y-auto overflow-x-hidden">
       <!-- Content -->
       <TransitionGroup
         tag="div"
@@ -88,23 +88,24 @@ const onNewReservationClick = () => {
         </div>
       </TransitionGroup>
     </div>
-    <div class="px-10 py-3 pb-6">
+    <div class="flex flex-row gap-3 md:gap-6 px-10 py-3 xl:px-48">
       <!-- Actions -->
       <Button
         v-if="!isReservationLoading && !isReservationFinished"
         v-show="currentStepIndex != 0"
-        label="Prethodni korak"
+        label="Nazad"
         icon="pi pi-chevron-left"
+        class="flex-1"
         outlined
         @click="onPreviousStepClick"
       >
       </Button>
       <Button
         v-if="currentStepIndex < items.length - 1"
-        label="Sledeći korak"
+        label="Dalje"
         icon="pi pi-chevron-right"
         icon-pos="right"
-        class="float-right"
+        class="ml-auto flex-1 lg:flex-none lg:w-1/2"
         @click="onNextStepClick"
         :disabled="disableNextButton"
       >
@@ -113,7 +114,7 @@ const onNewReservationClick = () => {
         v-if="currentStepIndex == items.length - 1 && !isReservationFinished"
         label="Rezerviši"
         icon="pi pi-check"
-        class="float-right"
+        class="ml-auto flex-1"
         @click="onReserveClickHandler"
         :loading="isReservationLoading"
       >
@@ -122,7 +123,7 @@ const onNewReservationClick = () => {
         v-if="isReservationFinished"
         label="Nova rezervacija"
         icon="pi pi-plus"
-        class="float-right"
+        class="ml-auto flex-1 lg:flex-none lg:w-1/2"
         @click="onNewReservationClick"
       >
       </Button>
