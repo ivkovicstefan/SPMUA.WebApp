@@ -28,7 +28,7 @@ const menuBarItems = ref([
 
 <template>
   <div class="flex flex-col min-h-screen">
-    <header class="px-10 py-5 lg:px-48">
+    <header class="px-10 py-5 xl:px-48">
       <Menubar :model="menuBarItems">
         <template #start>
           <router-link to="/">
@@ -57,18 +57,18 @@ const menuBarItems = ref([
     <main class="flex-grow">
       <RouterView> </RouterView>
     </main>
-    <footer class="flex flex-col px-10 py-5 lg:px-48 mt-6">
-      <div class="grid gird-cols-1 lg:grid-cols-3 gap-6">
-        <div class="flex order-1 lg:order-2 flex-col">
+    <footer class="flex flex-col px-10 py-5 xl:px-48 mt-6">
+      <div class="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-12">
+        <div class="flex order-1 md:order-3 lg:order-2 flex-col">
           <h1 class="text-[2.35rem] lg:text-5xl mb-6">Lokacija</h1>
           <p>Kneginje Milice 118</p>
           <p>35000, Jagodina</p>
           <a href="https://www.google.com/maps/place/Kneginje+Milice+118,+Jagodina+35000/@43.9743832,21.2643638,16.16z/data=!4m6!3m5!1s0x4756c4112e70f4d1:0xeec958f3e799216a!8m2!3d43.9743556!4d21.2648839!16s%2Fg%2F11kbm5zpjj?entry=ttu" target="_blank">
-            <img src="@/assets/map-view.png" class="rounded-lg"/>
+            <img src="@/assets/map-view.png" class="rounded-lg w-[100%] lg:w-[80%] md:hidden lg:block"/>
           </a>
           <Button label="Pokreni navigaciju" outlined class="mt-3 lg:!hidden"></Button>
         </div>
-        <div class="flex order-1 lg:order-2 flex-col">
+        <div class="flex order-1 md:order-2 lg:order-3 flex-col">
           <h1 class="text-[2.35rem] lg:text-5xl mb-6">Radno vreme</h1>
           <div v-if="workingDays.isFinished">
             <table class="text-center">
@@ -94,7 +94,7 @@ const menuBarItems = ref([
             </ProgressSpinner>
           </div>
         </div>
-        <div class="flex order-2 lg:order-1 flex-col">
+        <div class="flex order-2 md:order-1 flex-col">
           <h1 class="text-[2.35rem] lg:text-5xl mb-6">Kontakt</h1>
           <table class="table-auto">
             <tr>
@@ -110,13 +110,10 @@ const menuBarItems = ref([
               <td><a class="hover:text-gold-600" href="https://www.instagram.com/samardzicpetra.mua/" target="_blank">samardzicpetra.mua</a></td>
             </tr>
           </table>
-        </div>
-        <div class="flex order-3 flex-col">
-          <h1 class="text-[2.35rem] lg:text-5xl mb-6">Linkovi</h1>
+          <h1 class="text-[2.35rem] lg:text-5xl my-6">Linkovi</h1>
           <RouterLink class="hover:text-gold-600" :to="{ name: 'admin-reservations' }">Administracija</RouterLink>
           <RouterLink class="hover:text-gold-600" :to="{ name: 'reservation-status' }">Provera statusa rezervacije</RouterLink>
         </div>
-
       </div>
       <hr class="my-6">
       <div class="flex flex-col gap-1 lg:flex-row mb-3 justify-start lg:mr-auto lg:ml-auto">
