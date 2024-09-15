@@ -3,7 +3,6 @@ import { ref, type PropType, computed } from 'vue'
 
 interface RadioGroupOptions {
   valueProperty: string
-  itemDirection: string
 }
 
 const props = defineProps({
@@ -15,6 +14,14 @@ const props = defineProps({
     type: Array as any,
     required: true
   },
+  containerClass: {
+    type: String,
+    required: false
+  },
+  itemClass: {
+    type: String,
+    required: false
+  },
   options: {
     type: Object as PropType<RadioGroupOptions>,
     required: true
@@ -24,16 +31,6 @@ const props = defineProps({
 const emits = defineEmits(['update:modelValue'])
 
 const selectedValue = ref(props.modelValue)
-
-const computedClassList = computed(() => {
-  if (props.options.itemDirection == 'row') {
-    return 'flex-row flex-wrap'
-  } else if (props.options.itemDirection == 'column') {
-    return 'flex-col'
-  } else {
-    return ''
-  }
-})
 
 const isActiveRadioItem = (item: any) => {
   return item[props.options.valueProperty] == selectedValue.value
@@ -46,11 +43,11 @@ const onRadioItemClick = (item: any) => {
 </script>
 
 <template>
-  <div class="flex justify-start gap-3 items-left" :class="computedClassList">
+  <div class="grid grid-cols-1 gap-6" :class="containerClass">
     <template v-for="(item, index) in items" :key="index">
       <div
         class="bg-white border-t-2 rounded-lg shadow-lg cursor-pointer hover:border-black transition hover:scale-105"
-        :class="{ '!bg-black text-white border-black hover:!scale-100': isActiveRadioItem(item) }"
+        :class="{ '!bg-black text-white border-black hover:!scale-100': isActiveRadioItem(item), itemClass }"
         @click="onRadioItemClick(item)"
       >
         <slot name="radioItem" :item="item"></slot>
