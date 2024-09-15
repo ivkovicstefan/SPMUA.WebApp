@@ -28,7 +28,7 @@ const menuBarItems = ref([
 
 <template>
   <div class="flex flex-col min-h-screen">
-    <header class="px-10 py-5 lg:px-48">
+    <header class="px-10 py-5 xl:px-48">
       <Menubar :model="menuBarItems">
         <template #start>
           <router-link to="/">
@@ -57,7 +57,7 @@ const menuBarItems = ref([
     <main class="flex-grow">
       <RouterView> </RouterView>
     </main>
-    <footer class="flex flex-col px-10 py-5 lg:px-48 mt-6">
+    <footer class="flex flex-col px-10 py-5 xl:px-48 mt-6">
       <div class="grid gird-cols-1 lg:grid-cols-3 gap-6">
         <div class="flex order-1 lg:order-2 flex-col">
           <h1 class="text-[2.35rem] lg:text-5xl mb-6">Lokacija</h1>
